@@ -62,7 +62,11 @@ export function HeroSection() {
                 <motion.div
                   className="absolute top-8 right-8 w-12 h-12 border-2 border-blue-400 rounded-lg opacity-30"
                   animate={{ rotate: [0, 90, 180, 270, 360] }}
-                  transition={{ duration: 8, repeat: Infinity, linear: true }}
+                  transition={{
+  duration: 8,
+  repeat: Infinity,
+  ease: "linear",
+}}
                 />
                 <motion.div
                   className="absolute bottom-12 left-8 w-8 h-8 border border-purple-400 rounded-full opacity-30"
