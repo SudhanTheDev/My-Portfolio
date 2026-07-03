@@ -1,0 +1,94 @@
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { Navbar } from "@/components/navbar";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://sudhan.dev"),
+  title: "Sudhan B. | Software Developer • Flutter Developer • Creative Technologist",
+  description:
+    "I'm Sudhan, a BIT student from Nepal passionate about building beautiful digital experiences. Flutter developer, AI enthusiast, and creative designer crafting modern mobile apps and immersive user experiences.",
+  keywords: [
+    "Sudhan B",
+    "Flutter Developer",
+    "Software Developer",
+    "Creative Designer",
+    "AI Builder",
+    "Mobile App Developer",
+    "Web Developer",
+    "Nepal",
+    "Portfolio",
+  ],
+  authors: [{ name: "Sudhan B." }],
+  creator: "Sudhan B.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://sudhan.dev",
+    siteName: "Sudhan B. Portfolio",
+    title: "Sudhan B. | Software Developer • Flutter Developer • Creative Technologist",
+    description:
+      "Building beautiful digital experiences with Flutter, AI, and modern web technologies. Creative designer and developer from Nepal.",
+    images: [
+      {
+        url: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        width: 1200,
+        height: 630,
+        alt: "Sudhan B. Portfolio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sudhan B. | Software Developer • Flutter Developer",
+    description:
+      "Building beautiful digital experiences with Flutter, AI, and modern web technologies.",
+    images: [
+      "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    ],
+    creator: "@sudhanb",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body className="bg-[#050505] text-white antialiased">
+        <ScrollProgress />
+        <Navbar />
+        {children}
+      </body>
+    </html>
+  );
+}
