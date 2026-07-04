@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
+import { BrandLogo } from "./brand-logo";
+import { InteractiveButton } from "./interactive-button";
+import { transition } from "@/lib/motion";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -20,115 +23,111 @@ export function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-
-      const sections = navLinks.map((link) => link.href.replace("#", ""));
-      for (const section of sections.reverse()) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 200) {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 50);
+        const sections = navLinks.map((link) => link.href.replace("#", ""));
+        for (const section of sections.reverse()) {
+          const element = document.getElementById(section);
+          if (element && element.getBoundingClientRect().top <= 200) {
             setActiveSection(section);
             break;
           }
         }
-      }
+        ticking = false;
+      });
     };
-
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
       <motion.nav
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={transition.default}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           scrolled
-            ? "bg-black/90 backdrop-blur-md border-b border-zinc-900"
-            : "bg-transparent"
+            ? "py-3"
+            : "py-0"
         )}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <motion.a
-              href="#home"
-              className="text-2xl font-medium text-white hover:text-zinc-300 transition-colors duration-300"
-              whileHover={{ scale: 1.02 }}
-            >
-              SB.
-            </motion.a>
+        <div className={cn(
+          "max-w-7xl mx-auto px-6 lg:px-8 transition-all duration-500",
+          scrolled && "glass-card rounded-2xl mx-4 lg:mx-auto shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+        )}>
+          <div className="flex items-center justify-between h-16">
+            <a href="#home" className="hover:opacity-90 transition-opacity">
+              <BrandLogo size="md" />
+            </a>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className={cn(
-                    "text-sm transition-colors duration-300",
-                    activeSection === link.href.replace("#", "")
-                      ? "text-white"
-                      : "text-zinc-500 hover:text-white"
-                  )}
-                >
-                  {link.name}
-                </a>
-              ))}
-              <ThemeToggle />
+            <div className="hidden md:flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/10">
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.href.replace("#", "");
+                return (
+                  <InteractiveButton
+                    key={link.name}
+                    href={link.href}
+                    variant="nav"
+                    active={isActive}
+                    className={cn(
+                      "px-4 py-2",
+                      isActive ? "text-white" : "text-muted"
+                    )}
+                  >
+                    {link.name}
+                  </InteractiveButton>
+                );
+              })}
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <ThemeToggle />
-              <motion.button
-                whileTap={{ scale: 0.9 }}
+              <InteractiveButton
+                variant="icon"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-white"
+                className="md:hidden"
+                aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </motion.button>
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </InteractiveButton>
             </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 md:hidden bg-black"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="fixed inset-x-4 top-20 z-40 md:hidden glass-card rounded-2xl p-6"
           >
-            <div className="pt-24 px-6">
-              <div className="flex flex-col gap-2">
-                {navLinks.map((link, i) => (
-                  <motion.a
-                    key={link.name}
-                    href={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      "py-3 text-2xl font-medium transition-colors",
-                      activeSection === link.href.replace("#", "")
-                        ? "text-white"
-                        : "text-zinc-500"
-                    )}
-                  >
-                    {link.name}
-                  </motion.a>
-                ))}
-              </div>
+            <div className="flex flex-col gap-1">
+              {navLinks.map((link, i) => (
+                <motion.a
+                  key={link.name}
+                  href={link.href}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "py-3 px-4 text-lg font-medium rounded-xl transition-colors",
+                    activeSection === link.href.replace("#", "")
+                      ? "text-white bg-white/10"
+                      : "text-muted"
+                  )}
+                >
+                  {link.name}
+                </motion.a>
+              ))}
             </div>
           </motion.div>
         )}

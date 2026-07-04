@@ -16,7 +16,7 @@ export function GamingSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="gaming" className="py-32 border-t border-zinc-900">
+    <section id="gaming" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left Side */}
@@ -65,7 +65,7 @@ export function GamingSection() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                className="group relative pl-8 border-l border-zinc-800 hover:border-zinc-600 transition-colors duration-500"
+                className="group relative pl-8 border-l border-border hover:border-zinc-600 transition-colors duration-500"
               >
                 <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-zinc-800 group-hover:bg-white transition-colors duration-500" />
                 <h3 className="text-lg font-medium text-white mb-2">{skill.title}</h3>

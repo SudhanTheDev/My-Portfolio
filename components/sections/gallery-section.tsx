@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { X } from "lucide-react";
+import { InteractiveButton } from "@/components/interactive-button";
+import { cn } from "@/lib/utils";
 
 const galleryImages = [
   {
@@ -52,7 +54,7 @@ export function GallerySection() {
       : galleryImages.filter((img) => img.category === selectedCategory);
 
   return (
-    <section id="gallery" className="py-32 border-t border-zinc-900">
+    <section id="gallery" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -77,17 +79,20 @@ export function GallerySection() {
           className="flex flex-wrap gap-4 mb-12"
         >
           {categories.map((category) => (
-            <button
+            <InteractiveButton
               key={category}
+              variant="pill"
+              active={selectedCategory === category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 text-sm transition-all duration-300 ${
+              className={cn(
+                "px-4 py-2",
                 selectedCategory === category
-                  ? "bg-white text-black"
-                  : "text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-600"
-              }`}
+                  ? "!bg-gradient-to-r !from-blue-500 !to-violet-500 !text-white !border-transparent !shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+                  : "text-muted"
+              )}
             >
               {category}
-            </button>
+            </InteractiveButton>
           ))}
         </motion.div>
 
@@ -130,12 +135,14 @@ export function GallerySection() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <button
-            className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-white transition-colors"
+          <InteractiveButton
+            variant="icon"
             onClick={() => setSelectedImage(null)}
+            className="absolute top-6 right-6"
+            aria-label="Close lightbox"
           >
             <X className="w-6 h-6" />
-          </button>
+          </InteractiveButton>
           <motion.img
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}

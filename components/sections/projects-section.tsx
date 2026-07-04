@@ -1,9 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { SectionHeader } from "@/components/section-header";
+import { InteractiveButton } from "@/components/interactive-button";
+import { fadeUp, transition, viewport } from "@/lib/motion";
 
 const projects = [
   {
@@ -11,98 +13,80 @@ const projects = [
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=1",
     href: "#",
+    accent: "from-blue-500 to-cyan-500",
   },
   {
     title: "Couple Social App",
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=2",
     href: "#",
+    accent: "from-violet-500 to-purple-500",
   },
   {
     title: "Savings Goal Tracker",
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=3",
     href: "#",
+    accent: "from-fuchsia-500 to-pink-500",
   },
   {
     title: "Moment Creation Studio",
     category: "Website",
     image: "https://picsum.photos/800/600?random=4",
     href: "#",
+    accent: "from-indigo-500 to-blue-500",
   },
 ];
 
 export function ProjectsSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, viewport);
 
   return (
-    <section id="projects" className="py-32 border-t border-zinc-900">
-      <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Section Header */}
+    <section id="projects" className="py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/10 to-transparent pointer-events-none" />
+      <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8 relative">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          variants={fadeUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          transition={transition.default}
           className="flex flex-col md:flex-row md:items-end md:justify-between mb-16"
         >
-          <div>
-            <span className="text-xs font-mono text-blue-400 tracking-widest uppercase mb-4 block font-bold">
-              ✨ /Featured Work
-            </span>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-display">
-              Featured Projects
-            </h2>
-          </div>
-          <a
-            href="#"
-            className="mt-6 md:mt-0 inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors duration-300 group"
-          >
-            View All Work
-            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-          </a>
+          <SectionHeader label="Featured Work" title="Selected Projects" className="mb-0" />
+          <InteractiveButton href="#" variant="pill" showArrow className="mt-6 md:mt-0">
+            View All
+          </InteractiveButton>
         </motion.div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <motion.a
               key={project.title}
               href={project.href}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.2 + index * 0.15 }}
-              className="group block"
+              variants={fadeUp}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              transition={{ ...transition.default, delay: 0.1 * index }}
+              className="group glow-card overflow-hidden block"
             >
-              {/* Project Image */}
-              <div className="relative aspect-[4/3] overflow-hidden bg-zinc-900 mb-6 rounded-2xl border border-zinc-800 group-hover:border-purple-500/50 transition-all duration-500">
+              <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 grayscale-to-color"
+                  className="w-full h-full object-cover grayscale-to-color group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                  <motion.div
-                    whileHover={{ scale: 1.2, rotate: 90 }}
-                    className="w-12 h-12 rounded-full border-2 border-white group-hover:scale-110 transition-transform duration-500 flex items-center justify-center"
-                  >
-                    <ArrowUpRight className="w-5 h-5 text-white" />
-                  </motion.div>
+                <div className={`absolute inset-0 bg-gradient-to-t ${project.accent} opacity-0 group-hover:opacity-20 transition-opacity duration-500 mix-blend-overlay`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#030014] via-transparent to-transparent opacity-60" />
+                <div className="absolute top-4 right-4 w-10 h-10 rounded-full glass-effect flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
+                  <ArrowUpRight className="w-5 h-5 text-white" />
                 </div>
               </div>
-
-              {/* Project Info */}
-              <div className="flex items-start justify-between group">
-                <div>
-                  <h3 className="text-xl lg:text-2xl font-bold text-white group-hover:text-purple-400 transition-colors duration-300 font-display">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-zinc-400 mt-2 font-semibold">{project.category}</p>
-                </div>
-                <div className="p-3 border border-zinc-700 group-hover:border-purple-500 group-hover:bg-purple-500/10 transition-all duration-300 rounded-lg">
-                  <ArrowUpRight className="w-5 h-5 text-zinc-400 group-hover:text-purple-400 transition-colors duration-300" />
-                </div>
+              <div className="p-6">
+                <p className="text-xs font-mono text-violet-400 uppercase tracking-widest mb-2">{project.category}</p>
+                <h3 className="text-xl font-bold text-foreground group-hover:text-shimmer transition-all font-display">
+                  {project.title}
+                </h3>
               </div>
             </motion.a>
           ))}

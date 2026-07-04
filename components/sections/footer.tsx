@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { BrandLogo } from "@/components/brand-logo";
+import { InteractiveButton } from "@/components/interactive-button";
 import { ArrowUpRight } from "lucide-react";
 
 const navLinks = [
@@ -19,38 +20,40 @@ const socialLinks = [
 ];
 
 export function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className="py-20 border-t border-zinc-900">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Logo & Tagline */}
-          <div className="lg:col-span-2">
-            <button onClick={scrollToTop} className="group mb-6">
-              <span className="text-3xl font-medium text-white group-hover:text-zinc-300 transition-colors duration-300">
-                SB.
-              </span>
-            </button>
-            <p className="text-sm text-zinc-500 max-w-sm">
-              Creating beautiful digital experiences from Nepal. Available for freelance projects and collaborations.
+    <footer className="relative py-24 border-t border-white/10">
+      <div className="absolute inset-0 bg-gradient-to-t from-violet-950/20 to-transparent pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
+        <div className="glass-card rounded-3xl p-10 md:p-14 mb-12 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
+            <span className="text-shimmer">Let&apos;s build something epic.</span>
+          </h2>
+          <p className="text-muted mb-8 max-w-md mx-auto">
+            Have a project in mind? Let&apos;s turn your ideas into reality.
+          </p>
+          <InteractiveButton href="#contact" variant="primary" showArrow className="px-8 py-4">
+            Start a Project
+          </InteractiveButton>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div>
+            <InteractiveButton variant="ghost" onClick={scrollToTop} className="mb-4 px-0 py-0 border-0 hover:bg-transparent">
+              <BrandLogo size="sm" />
+            </InteractiveButton>
+            <p className="text-sm text-muted max-w-xs">
+              Creating beautiful digital experiences from Nepal.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-              /Quick Links
-            </span>
-            <ul className="space-y-3">
+            <span className="text-xs font-mono text-violet-400 tracking-widest uppercase mb-4 block">Links</span>
+            <ul className="space-y-2">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-zinc-400 hover:text-white transition-colors duration-300"
-                  >
+                  <a href={link.href} className="text-sm text-muted hover:text-foreground transition-colors">
                     {link.name}
                   </a>
                 </li>
@@ -58,47 +61,30 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-              /Contact
-            </span>
-            <a
-              href="mailto:sudhan.bhattarainp@gmail.com"
-              className="group inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors duration-300 mb-6"
-            >
-              sudhan.bhattarainp@gmail.com
-              <ArrowUpRight className="w-3 h-3" />
-            </a>
-
-            {/* Social Links */}
-            <div className="flex flex-wrap gap-4">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-zinc-500 hover:text-white transition-colors duration-300"
-                >
-                  {link.name}
-                </a>
-              ))}
+            <span className="text-xs font-mono text-violet-400 tracking-widest uppercase mb-4 block">Connect</span>
+            <div className="flex flex-wrap gap-3">
+                {socialLinks.map((link) => (
+                  <InteractiveButton
+                    key={link.name}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="pill"
+                    className="text-sm"
+                  >
+                    {link.name}
+                  </InteractiveButton>
+                ))}
             </div>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-16 pt-8 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-zinc-600">
-            &copy; {new Date().getFullYear()} Sudhan B. All rights reserved.
-          </p>
-          <button
-            onClick={scrollToTop}
-            className="text-xs text-zinc-500 hover:text-white transition-colors duration-300"
-          >
-            Back to top
-          </button>
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted">
+          <p>&copy; {new Date().getFullYear()} Sudhan Bhattarai. All rights reserved.</p>
+          <InteractiveButton variant="ghost" onClick={scrollToTop} className="text-xs px-3 py-1.5">
+            Back to top ↑
+          </InteractiveButton>
         </div>
       </div>
     </footer>

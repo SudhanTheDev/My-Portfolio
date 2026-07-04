@@ -10,19 +10,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#050505',
-        surface: '#101010',
-        card: '#161616',
-        foreground: '#ffffff',
-        primary: '#ffffff',
-        muted: '#71717a',
-        border: '#27272a',
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        card: 'var(--card)',
+        foreground: 'var(--foreground)',
+        primary: 'var(--primary)',
+        muted: 'var(--muted)',
+        border: 'var(--border)',
         'accent-blue': '#3b82f6',
         'accent-purple': '#a855f7',
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        brand: ['var(--font-brand)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',

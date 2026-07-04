@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { InteractiveButton } from "@/components/interactive-button";
 
 const socialLinks = [
   { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com" },
@@ -32,7 +33,7 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-32 border-t border-zinc-900">
+    <section id="contact" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -66,7 +67,7 @@ export function ContactSection() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-0 py-3 bg-transparent border-b border-zinc-800 text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300"
+                  className="w-full px-0 py-3 bg-transparent border-b border-border text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300"
                   placeholder="Your name"
                   required
                 />
@@ -78,7 +79,7 @@ export function ContactSection() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-0 py-3 bg-transparent border-b border-zinc-800 text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300"
+                  className="w-full px-0 py-3 bg-transparent border-b border-border text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300"
                   placeholder="your@email.com"
                   required
                 />
@@ -90,18 +91,17 @@ export function ContactSection() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={4}
-                  className="w-full px-0 py-3 bg-transparent border-b border-zinc-800 text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300 resize-none"
+                  className="w-full px-0 py-3 bg-transparent border-b border-border text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors duration-300 resize-none"
                   placeholder="Tell me about your project..."
                   required
                 />
               </div>
 
-              <motion.button
+              <InteractiveButton
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                variant="primary"
                 disabled={submitted}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black text-sm font-medium hover:bg-zinc-200 disabled:bg-zinc-600 disabled:text-zinc-300 transition-colors duration-300"
+                className="px-8 py-4"
               >
                 {submitted ? (
                   <>
@@ -111,7 +111,7 @@ export function ContactSection() {
                 ) : (
                   "Submit"
                 )}
-              </motion.button>
+              </InteractiveButton>
             </form>
           </motion.div>
 
@@ -151,22 +151,23 @@ export function ContactSection() {
               </span>
               <div className="flex flex-wrap gap-4">
                 {socialLinks.map((link) => (
-                  <a
+                  <InteractiveButton
                     key={link.name}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-300"
+                    variant="ghost"
+                    showArrow
+                    className="text-sm px-2 py-1"
                   >
                     {link.name}
-                    <ArrowUpRight className="w-3 h-3" />
-                  </a>
+                  </InteractiveButton>
                 ))}
               </div>
             </div>
 
             {/* Availability */}
-            <div className="pt-8 border-t border-zinc-800">
+            <div className="pt-8 border-t border-border">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-2 h-2 rounded-full bg-green-500" />

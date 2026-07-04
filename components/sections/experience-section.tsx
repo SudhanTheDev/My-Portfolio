@@ -30,7 +30,7 @@ export function ExperienceSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="testimonials" className="py-32 border-t border-zinc-900">
+    <section id="testimonials" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -57,7 +57,7 @@ export function ExperienceSection() {
               transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
               className="group"
             >
-              <div className="relative pt-8 border-t border-zinc-800 group-hover:border-zinc-600 transition-colors duration-500">
+              <div className="relative pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500">
                 <p className="text-lg text-zinc-300 leading-relaxed mb-8">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>

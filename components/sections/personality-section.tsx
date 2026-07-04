@@ -15,7 +15,7 @@ export function PersonalitySection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="personality" className="py-32 border-t border-zinc-900">
+    <section id="personality" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -45,7 +45,7 @@ export function PersonalitySection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: 0.2 + index * 0.05 }}
-              className="px-6 py-3 border border-zinc-800 text-sm text-zinc-400 hover:border-zinc-600 hover:text-white transition-all duration-300 cursor-default"
+              className="px-6 py-3 border border-border text-sm text-zinc-400 hover:border-zinc-600 hover:text-white transition-all duration-300 cursor-default"
             >
               {interest}
             </motion.span>

@@ -1,53 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTheme } from "@/app/theme-provider";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const savedTheme = (localStorage.getItem("theme") as "dark" | "light") || "dark";
-    setTheme(savedTheme);
-    applyTheme(savedTheme);
-  }, []);
-
-  const applyTheme = (newTheme: "dark" | "light") => {
-    const root = document.documentElement;
-    if (newTheme === "light") {
-      root.classList.add("light-mode");
-    } else {
-      root.classList.remove("light-mode");
-    }
-  };
-
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    applyTheme(newTheme);
-  };
+  const { theme, toggleTheme, mounted } = useTheme();
 
   if (!mounted) {
-    return null;
+    return <div className="w-9 h-9" aria-hidden />;
   }
 
   return (
     <motion.button
       onClick={toggleTheme}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-      className="p-2 rounded-full border border-zinc-700 hover:border-blue-500 bg-zinc-900/50 hover:bg-blue-500/10 transition-all duration-300 flex items-center justify-center"
-      aria-label="Toggle theme"
+      whileHover={{ scale: 1.08, rotate: 15 }}
+      whileTap={{ scale: 0.92, rotate: 0 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+      className="btn-interactive p-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-sm hover:border-violet-400/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-[box-shadow,border-color] duration-300 flex items-center justify-center"
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
-      {theme === "dark" ? (
-        <Sun className="w-5 h-5 text-yellow-400" />
-      ) : (
-        <Moon className="w-5 h-5 text-blue-600" />
-      )}
+      <motion.span
+        key={theme}
+        initial={{ rotate: -90, opacity: 0 }}
+        animate={{ rotate: 0, opacity: 1 }}
+        transition={{ duration: 0.25 }}
+      >
+        {theme === "dark" ? (
+          <Sun className="w-4 h-4 text-amber-400" />
+        ) : (
+          <Moon className="w-4 h-4 text-accent-blue" />
+        )}
+      </motion.span>
     </motion.button>
   );
 }
