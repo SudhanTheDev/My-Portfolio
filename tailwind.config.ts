@@ -21,9 +21,9 @@ const config: Config = {
         'accent-purple': '#a855f7',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
-        brand: ['var(--font-brand)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Plus Jakarta Sans', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['var(--font-display)', 'Space Grotesk', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        brand: ['var(--font-brand)', 'Outfit', 'var(--font-sans)', 'system-ui', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',

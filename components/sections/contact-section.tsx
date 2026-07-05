@@ -3,14 +3,14 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { ArrowUpRight, CheckCircle, Github, Linkedin, Instagram, Mail } from "lucide-react";
 import { InteractiveButton } from "@/components/interactive-button";
 
 const socialLinks = [
-  { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com" },
-  { name: "GitHub", href: "https://github.com" },
-  { name: "LinkedIn", href: "https://linkedin.com" },
-  { name: "Instagram", href: "https://instagram.com" },
+  { name: "Email", href: "mailto:sudhanbhattarainp@gmail.com", icon: Mail },
+  { name: "GitHub", href: "https://github.com/Sujan-Nepal", icon: Github },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/", icon: Linkedin },
+  { name: "Instagram", href: "https://www.instagram.com/suzzy.3x3", icon: Instagram },
 ];
 
 export function ContactSection() {
@@ -128,10 +128,10 @@ export function ContactSection() {
                 /Email
               </span>
               <a
-                href="mailto:hello@sudhan.dev"
+                href="mailto:sudhanbhattarainp@gmail.com"
                 className="group inline-flex items-center gap-2 text-xl text-white hover:text-zinc-300 transition-colors duration-300"
               >
-                hello@sudhan.dev
+                sudhanbhattarainp@gmail.com
                 <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors duration-300" />
               </a>
             </div>
@@ -151,17 +151,19 @@ export function ContactSection() {
               </span>
               <div className="flex flex-wrap gap-4">
                 {socialLinks.map((link) => (
-                  <InteractiveButton
+                  <a
                     key={link.name}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    variant="ghost"
-                    showArrow
-                    className="text-sm px-2 py-1"
+                    className="group flex items-center gap-2 px-4 py-3 rounded-xl glass-card hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
                   >
-                    {link.name}
-                  </InteractiveButton>
+                    <link.icon className="w-5 h-5 text-zinc-400 group-hover:text-purple-400 transition-colors duration-300" />
+                    <span className="text-sm text-zinc-300 group-hover:text-white transition-colors duration-300">
+                      {link.name}
+                    </span>
+                    <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-purple-400 transition-colors duration-300" />
+                  </a>
                 ))}
               </div>
             </div>

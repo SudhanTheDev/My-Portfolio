@@ -23,8 +23,8 @@ export function HeroSection() {
             className="order-1 lg:order-2"
           >
             <motion.div variants={fadeUp} transition={transition.default} className="mb-6">
-              <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-effect text-xs font-mono tracking-widest uppercase">
-                <span className="status-dot w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-card text-xs font-mono tracking-widest uppercase hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 hover:scale-105">
+                <span className="status-dot w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)]" />
                 <span className="text-emerald-400 font-semibold">Available</span>
                 <span className="text-muted">for freelance</span>
               </span>
@@ -41,7 +41,7 @@ export function HeroSection() {
               <motion.span
                 variants={fadeUp}
                 transition={{ ...transition.default, delay: 0.12 }}
-                className="block text-shimmer"
+                className="block text-shimmer drop-shadow-[0_0_30px_rgba(168,85,247,0.5)]"
               >
                 Sudhan.
               </motion.span>
@@ -49,8 +49,8 @@ export function HeroSection() {
 
             <div className="space-y-5 text-lg text-muted leading-relaxed max-w-2xl mb-10">
               <motion.p variants={fadeUp} transition={{ ...transition.default, delay: 0.18 }}>
-                A <span className="text-blue-400 font-semibold">20-year-old developer</span> from{" "}
-                <span className="text-foreground font-semibold">Nepal</span> crafting stunning digital
+                A <span className="text-blue-400 font-semibold drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]">20-year-old developer</span> from{" "}
+                <span className="text-foreground font-semibold drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">Nepal</span> crafting stunning digital
                 experiences — mobile apps, websites, and AI-powered products.
               </motion.p>
             </div>

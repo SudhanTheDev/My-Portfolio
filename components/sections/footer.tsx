@@ -12,13 +12,6 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-const socialLinks = [
-  { name: "GitHub", href: "https://github.com" },
-  { name: "LinkedIn", href: "https://linkedin.com" },
-  { name: "Instagram", href: "https://instagram.com" },
-  { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com" },
-];
-
 export function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -38,7 +31,7 @@ export function Footer() {
           </InteractiveButton>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
             <InteractiveButton variant="ghost" onClick={scrollToTop} className="mb-4 px-0 py-0 border-0 hover:bg-transparent">
               <BrandLogo size="sm" />
@@ -59,24 +52,6 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div>
-            <span className="text-xs font-mono text-violet-400 tracking-widest uppercase mb-4 block">Connect</span>
-            <div className="flex flex-wrap gap-3">
-                {socialLinks.map((link) => (
-                  <InteractiveButton
-                    key={link.name}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="pill"
-                    className="text-sm"
-                  >
-                    {link.name}
-                  </InteractiveButton>
-                ))}
-            </div>
           </div>
         </div>
 

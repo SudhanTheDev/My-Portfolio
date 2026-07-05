@@ -65,7 +65,7 @@ export function AboutSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-8"
+            className="space-y-6"
           >
             {timeline.map((item, index) => (
               <motion.div
@@ -73,14 +73,16 @@ export function AboutSection() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                className="group relative pl-8 border-l border-border hover:border-zinc-600 transition-colors duration-500"
+                className="group relative pl-8 border-l-2 border-border hover:border-purple-500/50 transition-all duration-500"
               >
-                <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-zinc-800 group-hover:bg-white transition-colors duration-500" />
-                <span className="text-xs font-mono text-zinc-500 tracking-wider mb-2 block">
-                  {item.year}
-                </span>
-                <h3 className="text-lg font-medium text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-zinc-500">{item.description}</p>
+                <div className="absolute left-0 top-0 w-3 h-3 -translate-x-[6px] rounded-full bg-zinc-800 group-hover:bg-purple-400 group-hover:shadow-[0_0_12px_rgba(192,132,252,0.8)] transition-all duration-500" />
+                <div className="glass-card rounded-xl p-5 hover:shadow-lg hover:shadow-purple-500/15 transition-all duration-300 hover:scale-[1.02]">
+                  <span className="text-xs font-mono text-zinc-500 tracking-wider mb-2 block group-hover:text-purple-400 transition-colors duration-300">
+                    {item.year}
+                  </span>
+                  <h3 className="text-lg font-medium text-white mb-2 group-hover:text-purple-200 transition-colors duration-300">{item.title}</h3>
+                  <p className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">{item.description}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>

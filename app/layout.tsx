@@ -4,18 +4,26 @@ import { InteractiveBackground } from '@/components/interactive-background';
 import { CustomCursor } from '@/components/custom-cursor';
 import { ScrollProgress } from '@/components/scroll-progress';
 import { ThemeProvider } from './theme-provider';
-import { Playfair_Display, Inter, Space_Mono, Orbitron } from 'next/font/google';
+import { Space_Grotesk, Plus_Jakarta_Sans, Outfit, Space_Mono } from 'next/font/google';
 
-const playfair = Playfair_Display({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-brand',
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
 });
 
@@ -23,13 +31,6 @@ const spaceMono = Space_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   weight: ['400', '700'],
-  display: 'swap',
-});
-
-const orbitron = Orbitron({
-  subsets: ['latin'],
-  variable: '--font-brand',
-  weight: ['500', '600', '700', '800'],
   display: 'swap',
 });
 
@@ -58,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${spaceMono.variable} ${orbitron.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${spaceGrotesk.variable} ${plusJakarta.variable} ${spaceMono.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

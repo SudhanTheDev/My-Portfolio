@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect } from "react";
 import { scaleIn, transition } from "@/lib/motion";
+import { Github, Linkedin, Instagram, Mail } from "lucide-react";
 
 const PROFILE_IMAGE = "/profile.jpg";
 
@@ -82,6 +83,45 @@ export function HeroProfile() {
         <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
           Creative Developer
         </span>
+      </motion.div>
+
+      {/* Social Media Links */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...transition.default, delay: 0.5 }}
+        className="absolute -bottom-20 left-0 flex items-center gap-3"
+      >
+        <a
+          href="https://github.com/Sujan-Nepal"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all duration-300 group"
+        >
+          <Github className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/sudhan-bhattarai-662769392/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all duration-300 group"
+        >
+          <Linkedin className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+        </a>
+        <a
+          href="https://www.instagram.com/suzzy.3x3"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] transition-all duration-300 group"
+        >
+          <Instagram className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+        </a>
+        <a
+          href="mailto:sudhanbhattarainp@gmail.com"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all duration-300 group"
+        >
+          <Mail className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+        </a>
       </motion.div>
     </motion.div>
   );
