@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
-import { Github, Linkedin, Instagram, Mail } from "lucide-react";
+import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
 
 const PROFILE_IMAGE = "/profile.jpg";
 
 export function HeroProfile() {
+  const [crownHovered, setCrownHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -50,7 +51,41 @@ export function HeroProfile() {
         }}
       />
 
-      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative">
+      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative overflow-visible">
+        <div
+          onMouseEnter={() => setCrownHovered(true)}
+          onMouseLeave={() => setCrownHovered(false)}
+          onFocus={() => setCrownHovered(true)}
+          onBlur={() => setCrownHovered(false)}
+          className="absolute left-1/2 top-0 z-[80] -translate-x-1/2 -translate-y-1/2"
+        >
+        <motion.div
+          animate={{ y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] }}
+          transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
+          whileHover={{ scale: 1.08, y: -8 }}
+          className="group relative"
+        >
+          <button
+            type="button"
+            className="profile-crown flex items-center justify-center rounded-full border border-amber-300/30 bg-[#120a1f]/75 p-3 backdrop-blur-md"
+            aria-label="Show Sujan crown label"
+          >
+            <Crown className="h-5 w-5 text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)]" />
+          </button>
+          <div
+            className={`pointer-events-none absolute bottom-full left-1/2 z-[90] -translate-x-1/2 transition-all duration-200 ${
+              crownHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+            }`}
+          >
+            <div className="relative mb-4 rounded-full border border-white/10 bg-[#120a1f]/92 px-3 py-1 text-[0.65rem] uppercase tracking-[0.24em] text-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.12)] backdrop-blur-md">
+              Sujan
+              <span className="absolute left-1/2 top-full h-5 w-px -translate-x-1/2 bg-gradient-to-b from-amber-200/85 to-transparent" />
+              <span className="absolute left-1/2 top-[calc(100%+15px)] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-200/85 shadow-[0_0_10px_rgba(251,191,36,0.55)]" />
+            </div>
+          </div>
+        </motion.div>
+        </div>
+
         <div className="relative rounded-[2rem] p-[3px] bg-gradient-to-br from-blue-400/60 via-violet-500/50 to-fuchsia-500/40 shadow-[0_0_60px_rgba(99,102,241,0.35)]">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.85rem] bg-surface">
             <Image
@@ -61,8 +96,6 @@ export function HeroProfile() {
               sizes="(max-width: 768px) 300px, 340px"
               className="object-cover object-[center_18%] scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#030014]/80 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-violet-500/10 mix-blend-overlay" />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-[1.85rem]" />
           </div>
         </div>
@@ -90,37 +123,37 @@ export function HeroProfile() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...transition.default, delay: 0.5 }}
-        className="absolute -bottom-20 left-0 flex items-center gap-3"
+        className="absolute -bottom-20 left-0 right-0 flex items-center justify-center gap-3"
       >
         <a
           href="https://github.com/Sujan-Nepal"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all duration-300 group"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)] transition-all duration-300 group"
         >
-          <Github className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+          <Github className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)] transition-colors" />
         </a>
         <a
           href="https://www.linkedin.com/in/sudhan-bhattarai-662769392/"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all duration-300 group"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)] transition-all duration-300 group"
         >
-          <Linkedin className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+          <Linkedin className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)] transition-colors" />
         </a>
         <a
           href="https://www.instagram.com/suzzy.3x3"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] transition-all duration-300 group"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(236,72,153,0.6),0_0_60px_rgba(236,72,153,0.3)] transition-all duration-300 group"
         >
-          <Instagram className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+          <Instagram className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(236,72,153,1)] transition-colors" />
         </a>
         <a
-          href="mailto:sudhanbhattarainp@gmail.com"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all duration-300 group"
+          href="mailto:sudhan.bhattarainp@gmail.com"
+          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(34,211,238,0.6),0_0_60px_rgba(34,211,238,0.3)] transition-all duration-300 group"
         >
-          <Mail className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-colors" />
+          <Mail className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(34,211,238,1)] transition-colors" />
         </a>
       </motion.div>
     </motion.div>

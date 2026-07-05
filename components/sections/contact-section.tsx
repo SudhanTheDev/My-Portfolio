@@ -7,7 +7,7 @@ import { ArrowUpRight, CheckCircle, Github, Linkedin, Instagram, Mail } from "lu
 import { InteractiveButton } from "@/components/interactive-button";
 
 const socialLinks = [
-  { name: "Email", href: "mailto:sudhanbhattarainp@gmail.com", icon: Mail },
+  { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com", icon: Mail },
   { name: "GitHub", href: "https://github.com/Sujan-Nepal", icon: Github },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/", icon: Linkedin },
   { name: "Instagram", href: "https://www.instagram.com/suzzy.3x3", icon: Instagram },
@@ -15,7 +15,7 @@ const socialLinks = [
 
 export function ContactSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -38,18 +38,18 @@ export function ContactSection() {
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           className="mb-16"
         >
           <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-            /Contact
+            Contact
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight">
-            Let&apos;s talk.
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
+            Let&apos;s talk 💬
           </h2>
           <p className="mt-6 text-lg text-zinc-400 max-w-xl">
-            Have a project or need help? Fill out the form, and I&apos;ll get back to you soon.
+            Have a project or need help? Fill out the form, and I&apos;ll get back to you soon ✉️
           </p>
         </motion.div>
 
@@ -57,8 +57,8 @@ export function ContactSection() {
           {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -118,20 +118,20 @@ export function ContactSection() {
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
             className="space-y-12"
           >
             {/* Email */}
             <div>
               <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-3 block">
-                /Email
+                Email
               </span>
               <a
-                href="mailto:sudhanbhattarainp@gmail.com"
+                href="mailto:sudhan.bhattarainp@gmail.com"
                 className="group inline-flex items-center gap-2 text-xl text-white hover:text-zinc-300 transition-colors duration-300"
               >
-                sudhanbhattarainp@gmail.com
+                sudhan.bhattarainp@gmail.com
                 <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors duration-300" />
               </a>
             </div>
@@ -139,7 +139,7 @@ export function ContactSection() {
             {/* Location */}
             <div>
               <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-3 block">
-                /Location
+                Location
               </span>
               <p className="text-xl text-white">Nepal</p>
             </div>
@@ -147,7 +147,7 @@ export function ContactSection() {
             {/* Social */}
             <div>
               <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-3 block">
-                /Social
+                Social
               </span>
               <div className="flex flex-wrap gap-4">
                 {socialLinks.map((link) => (

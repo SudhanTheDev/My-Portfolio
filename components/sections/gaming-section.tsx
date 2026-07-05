@@ -13,7 +13,7 @@ const gamingSkills = [
 
 export function GamingSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
     <section id="gaming" className="py-32 border-t border-border">
@@ -22,14 +22,14 @@ export function GamingSection() {
           {/* Left Side */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           >
             <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-              /Gaming
+              Gaming
             </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-6">
-              Competitive<br />Gaming
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-6 drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
+              Competitive<br />Gaming 🎮
             </h2>
             <p className="text-lg text-zinc-400 leading-relaxed mb-8">
               Competitive PUBG MOBILE player with a passion for strategy and teamwork. The skills I&apos;ve developed through gaming translate into my approach to building products—fast, decisive, and collaborative.
@@ -55,16 +55,16 @@ export function GamingSection() {
           {/* Right Side - Skills */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="space-y-8"
           >
             {gamingSkills.map((skill, index) => (
               <motion.div
                 key={skill.title}
-                initial={{ opacity: 0, x: 20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                initial={{ opacity: 0, x: 15 }}
+                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 15 }}
+                transition={{ duration: 0.4, delay: 0.15 + index * 0.08 }}
                 className="group relative pl-8 border-l border-border hover:border-zinc-600 transition-colors duration-500"
               >
                 <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-zinc-800 group-hover:bg-white transition-colors duration-500" />

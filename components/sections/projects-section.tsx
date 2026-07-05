@@ -9,28 +9,28 @@ import { fadeUp, transition, viewport } from "@/lib/motion";
 
 const projects = [
   {
-    title: "Personal AI Assistant",
+    title: "Personal AI Assistant 🤖",
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=1",
     href: "#",
     accent: "from-blue-500 to-cyan-500",
   },
   {
-    title: "Couple Social App",
+    title: "Couple Social App 💑",
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=2",
     href: "#",
     accent: "from-violet-500 to-purple-500",
   },
   {
-    title: "Savings Goal Tracker",
+    title: "Savings Goal Tracker 💰",
     category: "Flutter App",
     image: "https://picsum.photos/800/600?random=3",
     href: "#",
     accent: "from-fuchsia-500 to-pink-500",
   },
   {
-    title: "Moment Creation Studio",
+    title: "Moment Creation Studio 🎨",
     category: "Website",
     image: "https://picsum.photos/800/600?random=4",
     href: "#",
@@ -47,10 +47,9 @@ export function ProjectsSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/10 to-transparent pointer-events-none" />
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8 relative">
         <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          transition={transition.default}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           className="flex flex-col md:flex-row md:items-end md:justify-between mb-16"
         >
           <SectionHeader label="Featured Work" title="Selected Projects" className="mb-0" />
@@ -64,10 +63,9 @@ export function ProjectsSection() {
             <motion.a
               key={project.title}
               href={project.href}
-              variants={fadeUp}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              transition={{ ...transition.default, delay: 0.1 * index }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
               className="group glow-card overflow-hidden block"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -84,7 +82,7 @@ export function ProjectsSection() {
               </div>
               <div className="p-6">
                 <p className="text-xs font-mono text-violet-400 uppercase tracking-widest mb-2">{project.category}</p>
-                <h3 className="text-xl font-bold text-foreground group-hover:text-shimmer transition-all font-display">
+                <h3 className="text-xl font-bold text-foreground group-hover:text-shimmer group-hover:drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all font-display">
                   {project.title}
                 </h3>
               </div>

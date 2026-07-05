@@ -27,7 +27,7 @@ const testimonials = [
 
 export function ExperienceSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
     <section id="testimonials" className="py-32 border-t border-border">
@@ -35,15 +35,15 @@ export function ExperienceSection() {
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           className="mb-16"
         >
           <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-            /Testimonials
+            Testimonials
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight">
-            What People Say
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
+            What People Say 💬
           </h2>
         </motion.div>
 
@@ -53,8 +53,8 @@ export function ExperienceSection() {
             <motion.div
               key={testimonial.author}
               initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
               className="group"
             >
               <div className="relative pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500">

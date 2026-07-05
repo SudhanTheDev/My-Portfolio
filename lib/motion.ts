@@ -29,4 +29,4 @@ export const transition = {
   slow: { duration: 0.75, ease: easeOut },
 };
 
-export const viewport = { once: true, margin: "-80px" as const };
+export const viewport = { once: false, margin: "-80px" as const };

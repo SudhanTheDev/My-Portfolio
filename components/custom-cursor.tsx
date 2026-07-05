@@ -2,145 +2,98 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const STAR_COUNT = 20;
-
-interface Star {
-  x: number;
-  y: number;
-  size: number;
-  opacity: number;
-  rotation: number;
-  life: number;
-  vx: number;
-  vy: number;
-}
+const TRAIL_COUNT = 6;
 
 export function CustomCursor() {
   const [enabled, setEnabled] = useState(false);
   const [visible, setVisible] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
   const auraRef = useRef<HTMLDivElement>(null);
-  const starsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const mouse = useRef({ x: -100, y: -100 });
-  const cursor = useRef({ x: -100, y: -100 });
-  const stars = useRef<Star[]>([]);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const trailRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const mouse = useRef({ x: -200, y: -200 });
+  const dot = useRef({ x: -200, y: -200 });
+  const aura = useRef({ x: -200, y: -200 });
+  const ring = useRef({ x: -200, y: -200 });
+  const trail = useRef(
+    Array.from({ length: TRAIL_COUNT }, () => ({ x: -200, y: -200 }))
+  );
   const rafId = useRef<number>();
-  const clicking = useRef(false);
-  const lastStarTime = useRef(0);
-  const shakeOffset = useRef({ x: 0, y: 0 });
+  const isPressed = useRef(false);
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     if (!isFinePointer || prefersReducedMotion) return;
 
     setEnabled(true);
     document.documentElement.classList.add("custom-cursor-active");
+    document.documentElement.style.setProperty("--mouse-x", "-200px");
+    document.documentElement.style.setProperty("--mouse-y", "-200px");
 
-    const onMove = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
-      document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
+    const onMove = (event: MouseEvent) => {
+      mouse.current = { x: event.clientX, y: event.clientY };
+      document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
+      document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
       setVisible(true);
-
-      // Add star trail on movement
-      const now = Date.now();
-      if (now - lastStarTime.current > 50) {
-        stars.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          size: Math.random() * 4 + 2,
-          opacity: 1,
-          rotation: Math.random() * 360,
-          life: 1,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
-        });
-        if (stars.current.length > STAR_COUNT) {
-          stars.current.shift();
-        }
-        lastStarTime.current = now;
-      }
     };
 
     const onDown = () => {
-      clicking.current = true;
+      isPressed.current = true;
     };
+
     const onUp = () => {
-      clicking.current = false;
-      shakeOffset.current = { x: 0, y: 0 };
+      isPressed.current = false;
     };
+
     const onLeave = () => {
       setVisible(false);
-      clicking.current = false;
+      isPressed.current = false;
     };
-    const onEnter = () => setVisible(true);
+
+    const onEnter = () => {
+      setVisible(true);
+    };
 
     const animate = () => {
-      // Real-time cursor following with shake effect when clicking
-      if (clicking.current) {
-        shakeOffset.current = {
-          x: (Math.random() - 0.5) * 4,
-          y: (Math.random() - 0.5) * 4,
-        };
-      } else {
-        shakeOffset.current = { x: 0, y: 0 };
-      }
+      dot.current.x += (mouse.current.x - dot.current.x) * 0.32;
+      dot.current.y += (mouse.current.y - dot.current.y) * 0.32;
+      aura.current.x += (mouse.current.x - aura.current.x) * 0.16;
+      aura.current.y += (mouse.current.y - aura.current.y) * 0.16;
+      ring.current.x += (mouse.current.x - ring.current.x) * 0.12;
+      ring.current.y += (mouse.current.y - ring.current.y) * 0.12;
 
-      cursor.current.x = mouse.current.x + shakeOffset.current.x;
-      cursor.current.y = mouse.current.y + shakeOffset.current.y;
-
-      const scale = clicking.current ? 0.85 : 1;
-
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${cursor.current.x}px, ${cursor.current.y}px, 0) translate(-50%, -50%) scale(${scale})`;
-      }
-      if (auraRef.current) {
-        auraRef.current.style.transform = `translate3d(${cursor.current.x}px, ${cursor.current.y}px, 0) translate(-50%, -50%) scale(${clicking.current ? 0.95 : 1})`;
-      }
-
-      // Continuous sparkles when clicking
-      if (clicking.current) {
-        const now = Date.now();
-        if (now - lastStarTime.current > 30) {
-          for (let i = 0; i < 3; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * 20 + 10;
-            stars.current.push({
-              x: mouse.current.x + Math.cos(angle) * 15,
-              y: mouse.current.y + Math.sin(angle) * 15,
-              size: Math.random() * 5 + 3,
-              opacity: 1,
-              rotation: Math.random() * 360,
-              life: 1,
-              vx: Math.cos(angle) * distance * 0.1,
-              vy: Math.sin(angle) * distance * 0.1,
-            });
-          }
-          if (stars.current.length > STAR_COUNT) {
-            stars.current.shift();
-          }
-          lastStarTime.current = now;
-        }
-      }
-
-      // Animate stars
-      stars.current.forEach((star, i) => {
-        star.life -= 0.025;
-        star.opacity = star.life;
-        star.rotation += 3;
-        star.x += star.vx;
-        star.y += star.vy;
-
-        const el = starsRef.current[i];
-        if (el && star.life > 0) {
-          el.style.transform = `translate3d(${star.x}px, ${star.y}px, 0) translate(-50%, -50%) rotate(${star.rotation}deg) scale(${star.life})`;
-          el.style.opacity = String(star.opacity);
-        }
+      trail.current.forEach((point, index) => {
+        const target =
+          index === 0 ? dot.current : trail.current[index - 1];
+        point.x += (target.x - point.x) * (0.22 - index * 0.018);
+        point.y += (target.y - point.y) * (0.22 - index * 0.018);
       });
 
-      // Remove dead stars
-      stars.current = stars.current.filter(star => star.life > 0);
+      const dotScale = isPressed.current ? 0.9 : 1;
+      const auraScale = isPressed.current ? 0.88 : 1;
+      const ringScale = isPressed.current ? 0.92 : 1;
+
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${dot.current.x}px, ${dot.current.y}px, 0) translate(-50%, -50%) scale(${dotScale})`;
+      }
+
+      if (auraRef.current) {
+        auraRef.current.style.transform = `translate3d(${aura.current.x}px, ${aura.current.y}px, 0) translate(-50%, -50%) scale(${auraScale})`;
+      }
+
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${ring.current.x}px, ${ring.current.y}px, 0) translate(-50%, -50%) scale(${ringScale}) rotate(${performance.now() * 0.015}deg)`;
+      }
+
+      trailRefs.current.forEach((node, index) => {
+        const point = trail.current[index];
+        if (!node) return;
+        const offset = index * 0.9;
+        node.style.transform = `translate3d(${point.x}px, ${point.y}px, 0) translate(-50%, -50%) scale(${1 - index * 0.08})`;
+        node.style.opacity = `${0.55 - offset * 0.06}`;
+      });
 
       rafId.current = requestAnimationFrame(animate);
     };
@@ -154,6 +107,8 @@ export function CustomCursor() {
 
     return () => {
       document.documentElement.classList.remove("custom-cursor-active");
+      document.documentElement.style.removeProperty("--mouse-x");
+      document.documentElement.style.removeProperty("--mouse-y");
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mousedown", onDown);
       window.removeEventListener("mouseup", onUp);
@@ -172,28 +127,37 @@ export function CustomCursor() {
       }`}
       aria-hidden
     >
-      {Array.from({ length: STAR_COUNT }).map((_, i) => (
-        <div
-          key={i}
-          ref={(el) => {
-            starsRef.current[i] = el;
-          }}
-          className="cursor-star fixed top-0 left-0"
-          style={{ opacity: 0 }}
-        />
-      ))}
-
       <div
         ref={auraRef}
         className="cursor-aura fixed top-0 left-0 rounded-full"
-        style={{ width: 40, height: 40 }}
+        style={{ width: 34, height: 34 }}
+      />
+
+      <div
+        ref={ringRef}
+        className="cursor-ring fixed top-0 left-0 rounded-full"
+        style={{ width: 60, height: 60 }}
       />
 
       <div
         ref={cursorRef}
         className="cursor-dot fixed top-0 left-0 rounded-full"
-        style={{ width: 16, height: 16 }}
+        style={{ width: 12, height: 12 }}
       />
+
+      {Array.from({ length: TRAIL_COUNT }).map((_, index) => (
+        <div
+          key={index}
+          ref={(node) => {
+            trailRefs.current[index] = node;
+          }}
+          className="cursor-trail-node fixed top-0 left-0 rounded-full"
+          style={{
+            width: index < 2 ? 8 : 6,
+            height: index < 2 ? 8 : 6,
+          }}
+        />
+      ))}
     </div>
   );
 }

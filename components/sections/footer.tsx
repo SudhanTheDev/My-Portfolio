@@ -21,17 +21,17 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
         <div className="glass-card rounded-3xl p-10 md:p-14 mb-12 text-center">
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            <span className="text-shimmer">Let&apos;s build something epic.</span>
+            <span className="text-shimmer">Let&apos;s build something epic 🚀</span>
           </h2>
           <p className="text-muted mb-8 max-w-md mx-auto">
-            Have a project in mind? Let&apos;s turn your ideas into reality.
+            Have a project in mind? Let&apos;s turn your ideas into reality ✨
           </p>
           <InteractiveButton href="#contact" variant="primary" showArrow className="px-8 py-4">
             Start a Project
           </InteractiveButton>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-12">
           <div>
             <InteractiveButton variant="ghost" onClick={scrollToTop} className="mb-4 px-0 py-0 border-0 hover:bg-transparent">
               <BrandLogo size="sm" />
@@ -41,7 +41,7 @@ export function Footer() {
             </p>
           </div>
 
-          <div>
+          <div className="md:text-right">
             <span className="text-xs font-mono text-violet-400 tracking-widest uppercase mb-4 block">Links</span>
             <ul className="space-y-2">
               {navLinks.map((link) => (

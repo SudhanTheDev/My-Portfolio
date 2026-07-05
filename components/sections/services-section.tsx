@@ -20,10 +20,9 @@ export function ServicesSection() {
     <section id="services" className="py-32 relative">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          transition={transition.default}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
         >
           <SectionHeader label="What I Do" title="Services & Expertise" />
         </motion.div>
@@ -32,14 +31,13 @@ export function ServicesSection() {
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              variants={fadeUp}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              transition={{ ...transition.default, delay: 0.08 * index }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.05 + index * 0.05 }}
               className="group glow-card p-6"
             >
               <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
-              <h3 className="text-lg font-bold mb-4 text-foreground font-display group-hover:text-shimmer transition-all">
+              <h3 className="text-lg font-bold mb-4 text-foreground font-display group-hover:text-shimmer group-hover:drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all">
                 {service.title}
               </h3>
               <ul className="space-y-2">

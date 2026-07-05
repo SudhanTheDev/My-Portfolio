@@ -17,7 +17,7 @@ const variants = {
   secondary:
     "text-foreground border border-white/20 bg-white/[0.03] backdrop-blur-sm hover:border-white/40 hover:bg-white/10 hover:shadow-[0_0_28px_rgba(99,102,241,0.28),inset_0_1px_0_rgba(255,255,255,0.12)]",
   ghost:
-    "text-muted hover:text-foreground hover:bg-white/7 border border-transparent hover:border-white/10 hover:shadow-[0_0_18px_rgba(147,197,253,0.16)]",
+    "text-muted hover:text-foreground border border-transparent hover:border-white/10 hover:shadow-[0_0_18px_rgba(147,197,253,0.16)]",
   pill:
     "text-sm rounded-full glass-effect hover:border-violet-400/50 hover:shadow-[0_0_24px_rgba(139,92,246,0.32)]",
   nav:

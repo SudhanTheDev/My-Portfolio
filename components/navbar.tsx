@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { BrandLogo } from "./brand-logo";
 import { InteractiveButton } from "./interactive-button";
+import { MusicButton } from "./music-button";
 import { transition } from "@/lib/motion";
 
 const navLinks = [
@@ -87,6 +88,7 @@ export function Navbar() {
             </div>
 
             <div className="flex items-center gap-3">
+              <MusicButton />
               <ThemeToggle />
               <InteractiveButton
                 variant="icon"

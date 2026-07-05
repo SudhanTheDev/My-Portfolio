@@ -12,7 +12,7 @@ const interests = [
 
 export function PersonalitySection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
     <section id="personality" className="py-32 border-t border-border">
@@ -20,31 +20,31 @@ export function PersonalitySection() {
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           className="mb-16"
         >
           <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
             /Beyond Coding
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight">
-            Interests
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
+            Interests 🌟
           </h2>
         </motion.div>
 
         {/* Interest Tags */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.4 }}
           className="flex flex-wrap gap-4 mb-20"
         >
           {interests.map((interest, index) => (
             <motion.span
               key={interest}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: 0.2 + index * 0.05 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.3, delay: 0.05 + index * 0.03 }}
               className="px-6 py-3 border border-border text-sm text-zinc-400 hover:border-zinc-600 hover:text-white transition-all duration-300 cursor-default"
             >
               {interest}

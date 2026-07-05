@@ -1,38 +1,10 @@
 import './gloabls.css';
+import type { CSSProperties, ReactNode } from 'react';
 import { Navbar } from '@/components/navbar';
 import { InteractiveBackground } from '@/components/interactive-background';
 import { CustomCursor } from '@/components/custom-cursor';
 import { ScrollProgress } from '@/components/scroll-progress';
 import { ThemeProvider } from './theme-provider';
-import { Space_Grotesk, Plus_Jakarta_Sans, Outfit, Space_Mono } from 'next/font/google';
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-display',
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-brand',
-  weight: ['400', '500', '600', '700', '800'],
-  display: 'swap',
-});
-
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-  weight: ['400', '700'],
-  display: 'swap',
-});
 
 export const metadata = {
   title: 'Sudhan Bhattarai - Developer & Designer',
@@ -56,10 +28,21 @@ const themeScript = `
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${plusJakarta.variable} ${spaceMono.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      style={
+        {
+          '--font-display': '"Segoe UI", "Trebuchet MS", "Avenir Next", system-ui, sans-serif',
+          '--font-sans': '"Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif',
+          '--font-brand': '"Arial Black", "Segoe UI", system-ui, sans-serif',
+          '--font-mono': '"Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace',
+        } as CSSProperties
+      }
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

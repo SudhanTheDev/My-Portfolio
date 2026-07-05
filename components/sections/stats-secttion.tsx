@@ -44,7 +44,7 @@ function AnimatedCounter({ value, suffix, inView }: { value: number; suffix: str
 
 export function StatsSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
     <section ref={ref} className="py-20 border-t border-border">
@@ -53,9 +53,9 @@ export function StatsSection() {
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+              transition={{ duration: 0.4, delay: 0.05 + index * 0.05 }}
               className="text-center group"
             >
               <div className="text-4xl md:text-5xl font-medium text-white mb-3">

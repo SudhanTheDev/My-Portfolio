@@ -6,26 +6,26 @@ import { useRef } from "react";
 
 const skillCategories = [
   {
-    title: "Web Development",
+    title: "Web Development 💻",
     skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "HTML/CSS"],
   },
   {
-    title: "Mobile Development",
+    title: "Mobile Development 📱",
     skills: ["Flutter", "Dart", "Firebase", "Cross-Platform Apps"],
   },
   {
-    title: "Programming",
+    title: "Programming ⌨️",
     skills: ["C Programming", "JavaScript", "Python", "Git/GitHub"],
   },
   {
-    title: "Design & Creative",
+    title: "Design & Creative 🎨",
     skills: ["Graphics Design", "UI/UX Design", "Photography", "Videography"],
   },
 ];
 
 export function SkillsSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
     <section id="skills" className="py-32 border-t border-border">
@@ -33,15 +33,15 @@ export function SkillsSection() {
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
           className="mb-16"
         >
           <span className="text-xs font-mono text-zinc-500 tracking-widest uppercase mb-4 block">
-            /Skills
+            Skills
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight">
-            Expertise
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
+            Expertise 🛠️
           </h2>
         </motion.div>
 
@@ -51,25 +51,29 @@ export function SkillsSection() {
             <motion.div
               key={category.title}
               initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
               className="group"
             >
-              <div className="h-full pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500">
-                <h3 className="text-xl font-medium mb-6 text-white">
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="h-full pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500"
+              >
+                <h3 className="text-xl font-medium mb-6 text-white group-hover:text-shimmer transition-all">
                   {category.title}
                 </h3>
                 <ul className="space-y-3">
                   {category.skills.map((skill) => (
-                    <li
+                    <motion.li
                       key={skill}
-                      className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors duration-300"
+                      whileHover={{ x: 4 }}
+                      className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors duration-300 cursor-default"
                     >
                       {skill}
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
