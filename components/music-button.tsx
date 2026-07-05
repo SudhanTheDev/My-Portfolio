@@ -43,6 +43,7 @@ export function MusicButton() {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerHostRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
+  const unlockedAudioRef = useRef(false);
 
   const [expanded, setExpanded] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -69,8 +70,8 @@ export function MusicButton() {
         events: {
           onReady: (event) => {
             event.target.setVolume(volume);
+            event.target.mute();
             event.target.playVideo();
-            event.target.unMute();
             setReady(true);
             setPlaying(true);
           },
@@ -117,6 +118,27 @@ export function MusicButton() {
   }, [ready, volume]);
 
   useEffect(() => {
+    if (!ready || unlockedAudioRef.current) return;
+
+    const unlockAudio = () => {
+      if (!playerRef.current || unlockedAudioRef.current) return;
+      unlockedAudioRef.current = true;
+      playerRef.current.unMute();
+      playerRef.current.setVolume(volume);
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+    window.addEventListener("touchstart", unlockAudio, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+    };
+  }, [ready, volume]);
+
+  useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) {
         setPinned(false);
@@ -130,6 +152,7 @@ export function MusicButton() {
 
   const togglePlayback = () => {
     if (!playerRef.current || !ready) return;
+    unlockedAudioRef.current = true;
     playerRef.current.unMute();
     if (playing) playerRef.current.pauseVideo();
     else playerRef.current.playVideo();
