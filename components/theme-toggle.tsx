@@ -12,12 +12,18 @@ export function ThemeToggle() {
   useEffect(() => {
     if (!mounted) return;
 
-    setShowHint(true);
-    const timeoutId = window.setTimeout(() => {
-      setShowHint(false);
-    }, 3200);
+    const showTimerId = window.setTimeout(() => {
+      setShowHint(true);
+    }, 1000);
 
-    return () => window.clearTimeout(timeoutId);
+    const hideTimerId = window.setTimeout(() => {
+      setShowHint(false);
+    }, 5600);
+
+    return () => {
+      window.clearTimeout(showTimerId);
+      window.clearTimeout(hideTimerId);
+    };
   }, [mounted]);
 
   if (!mounted) {
@@ -27,13 +33,14 @@ export function ThemeToggle() {
   return (
     <div className="relative flex items-center justify-center">
       <motion.div
-        initial={{ opacity: 0, y: 8, scale: 0.96 }}
-        animate={showHint ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 6, scale: 0.96 }}
-        transition={{ duration: 0.28, ease: "easeOut" }}
-        className="theme-toggle-hint pointer-events-none absolute right-full top-1/2 mr-4 -translate-y-1/2 whitespace-nowrap rounded-full border px-4 py-2 text-[11px] font-mono uppercase tracking-[0.26em] shadow-[0_16px_40px_rgba(59,130,246,0.2)] backdrop-blur-md"
+        initial={{ opacity: 0, y: -8, scale: 0.94 }}
+        animate={showHint ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -8, scale: 0.94 }}
+        transition={{ duration: 0.34, ease: "easeOut" }}
+        className="theme-toggle-hint pointer-events-none absolute right-0 top-full z-20 mt-4 whitespace-nowrap rounded-2xl border px-4 py-2.5 text-[11px] font-mono uppercase tracking-[0.26em] shadow-[0_16px_40px_rgba(59,130,246,0.2)] backdrop-blur-md"
       >
         Change Theme Here
         <span className="theme-toggle-hint-pointer" aria-hidden />
+        <span className="theme-toggle-hint-line" aria-hidden />
       </motion.div>
 
       <motion.button

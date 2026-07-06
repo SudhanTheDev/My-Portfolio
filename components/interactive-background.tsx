@@ -39,6 +39,7 @@ interface RenderedParticle {
   alpha: number;
   color: string;
   kind: "dot" | "star";
+  glow: number;
 }
 
 export function InteractiveBackground() {
@@ -298,6 +299,7 @@ export function InteractiveBackground() {
           particle.alpha +
           Math.sin(time * 0.0018 * particle.twinkle + particle.phase) * 0.16 +
           lineAlpha * 0.8;
+        const glow = lightMode ? 1.4 + particle.depth * 0.22 : 1;
 
         rendered.push({
           x,
@@ -306,6 +308,7 @@ export function InteractiveBackground() {
           alpha: Math.max(0.1, alpha),
           color: particle.color,
           kind: particle.kind,
+          glow,
         });
       }
 
@@ -363,8 +366,8 @@ export function InteractiveBackground() {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${particle.color}, ${particle.alpha})`;
-        ctx.shadowColor = `rgba(${particle.color}, 0.6)`;
-        ctx.shadowBlur = 12;
+        ctx.shadowColor = `rgba(${particle.color}, ${lightMode ? 0.82 : 0.6})`;
+        ctx.shadowBlur = 12 * particle.glow;
         ctx.fill();
       }
     };

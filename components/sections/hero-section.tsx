@@ -144,7 +144,7 @@ export function HeroSection() {
               className="flex flex-wrap gap-4"
             >
               <GlowButton href="#projects">Explore My Work</GlowButton>
-              <GlowButton href="#contact" variant="secondary">
+              <GlowButton href="#contact" variant="secondary" className="hero-contact-rgb">
                 Get In Touch
               </GlowButton>
             </motion.div>

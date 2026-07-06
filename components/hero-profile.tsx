@@ -1,15 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
 import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
 
-const PROFILE_IMAGE = "/profile.jpg";
+const PROFILE_IMAGES = [
+  { src: "/profile.jpg", position: "center 18%" },
+  { src: "/profile-gallery/photo-3.jpg", position: "center 22%" },
+  { src: "/profile-gallery/photo-7.jpg", position: "center 18%" },
+  { src: "/profile-gallery/photo-8.jpg", position: "center 18%" },
+];
 
 export function HeroProfile() {
   const [crownHovered, setCrownHovered] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -32,13 +38,21 @@ export function HeroProfile() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [mouseX, mouseY]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveImage((current) => (current + 1) % PROFILE_IMAGES.length);
+    }, 7000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return (
     <motion.div
       variants={scaleIn}
       initial="hidden"
       animate="visible"
       transition={transition.slow}
-      className="relative w-full max-w-[340px] mx-auto lg:mx-0"
+      className="relative w-full max-w-[390px] mx-auto lg:mx-0"
       style={{ perspective: 1200 }}
     >
       <motion.div
@@ -63,7 +77,7 @@ export function HeroProfile() {
           animate={{ y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] }}
           transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
           whileHover={{ scale: 1.08, y: -8 }}
-          className="group relative"
+          className="group relative profile-crown-wrap"
         >
           <button
             type="button"
@@ -77,10 +91,10 @@ export function HeroProfile() {
               crownHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
             }`}
           >
-            <div className="relative mb-4 rounded-full border border-white/10 bg-[#120a1f]/92 px-3 py-1 text-[0.65rem] uppercase tracking-[0.24em] text-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.12)] backdrop-blur-md">
+            <div className="profile-crown-label relative mb-4 rounded-full border border-white/10 bg-[#120a1f]/92 px-3 py-1 text-[0.65rem] uppercase tracking-[0.24em] text-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.12)] backdrop-blur-md">
               Sujan
-              <span className="absolute left-1/2 top-full h-5 w-px -translate-x-1/2 bg-gradient-to-b from-amber-200/85 to-transparent" />
-              <span className="absolute left-1/2 top-[calc(100%+15px)] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-200/85 shadow-[0_0_10px_rgba(251,191,36,0.55)]" />
+              <span className="profile-crown-label-line absolute left-1/2 top-full h-5 w-px -translate-x-1/2 bg-gradient-to-b from-amber-200/85 to-transparent" />
+              <span className="profile-crown-label-dot absolute left-1/2 top-[calc(100%+15px)] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-200/85 shadow-[0_0_10px_rgba(251,191,36,0.55)]" />
             </div>
           </div>
         </motion.div>
@@ -88,13 +102,32 @@ export function HeroProfile() {
 
         <div className="relative rounded-[2rem] p-[3px] bg-gradient-to-br from-blue-400/60 via-violet-500/50 to-fuchsia-500/40 shadow-[0_0_60px_rgba(99,102,241,0.35)]">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.85rem] bg-surface">
-            <Image
-              src={PROFILE_IMAGE}
-              alt="Sudhan Bhattarai"
-              fill
-              priority
-              sizes="(max-width: 768px) 300px, 340px"
-              className="object-cover object-[center_18%] scale-105"
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={PROFILE_IMAGES[activeImage].src}
+                initial={{ opacity: 0, scale: 1.12, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1.04, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={PROFILE_IMAGES[activeImage].src}
+                  alt="Sudhan Bhattarai"
+                  fill
+                  priority={activeImage === 0}
+                  sizes="(max-width: 768px) 340px, 390px"
+                  className="object-cover scale-105"
+                  style={{ objectPosition: PROFILE_IMAGES[activeImage].position }}
+                />
+              </motion.div>
+            </AnimatePresence>
+            <motion.div
+              key={`profile-sweep-${activeImage}`}
+              initial={{ opacity: 0, x: "-120%" }}
+              animate={{ opacity: [0, 0.3, 0], x: ["-120%", "5%", "120%"] }}
+              transition={{ duration: 1.15, ease: "easeInOut" }}
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent mix-blend-screen"
             />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-[1.85rem]" />
           </div>
