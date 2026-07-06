@@ -178,7 +178,7 @@ export function MusicButton() {
             : "0 0 0 rgba(0,0,0,0)",
         }}
         transition={{ type: "spring", stiffness: 180, damping: 28, mass: 0.95 }}
-        className="flex h-[42px] items-center overflow-hidden rounded-full border bg-white/5 pr-2 backdrop-blur-sm"
+        className="music-toggle-shell flex h-[42px] items-center overflow-hidden rounded-full border bg-white/5 pr-2 backdrop-blur-sm"
       >
         <motion.button
           type="button"
@@ -187,7 +187,7 @@ export function MusicButton() {
             setExpanded(true);
           }}
           whileTap={{ scale: 0.95 }}
-          className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-white/8 text-cyan-300 transition-colors duration-300 hover:bg-white/12"
+          className="music-toggle-button flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 backdrop-blur-sm text-cyan-300 transition-[box-shadow,border-color,background,color] duration-300 hover:border-violet-400/40 hover:bg-white/12 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]"
           aria-label="Toggle music controls"
         >
           <Music2 className="h-4 w-4" />

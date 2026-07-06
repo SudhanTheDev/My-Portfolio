@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface DustParticle {
   x: number;
@@ -28,7 +28,7 @@ interface FloatingGlyph {
   driftY: number;
   phase: number;
   alpha: number;
-  kind: "diamond" | "triangle" | "ring";
+  kind: "diamond" | "triangle" | "ring" | "star" | "cross";
   color: string;
 }
 
@@ -47,6 +47,19 @@ export function InteractiveBackground() {
   const scrollDirectionRef = useRef(1);
   const scrollEnergyRef = useRef(0);
   const mouseRef = useRef({ x: -320, y: -320, active: false });
+  const [lightMode, setLightMode] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const syncTheme = () => setLightMode(root.classList.contains("light-mode"));
+
+    syncTheme();
+
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,8 +102,8 @@ export function InteractiveBackground() {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const particleCount = Math.min(180, Math.floor((width * height) / 11000));
-      const glyphCount = Math.min(20, Math.floor((width * height) / 70000));
+      const particleCount = Math.min(240, Math.floor((width * height) / 9000));
+      const glyphCount = Math.min(28, Math.floor((width * height) / 56000));
 
       particles = Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
@@ -117,11 +130,13 @@ export function InteractiveBackground() {
         driftX: Math.random() * 90 + 24,
         driftY: Math.random() * 70 + 20,
         phase: Math.random() * Math.PI * 2,
-        alpha: Math.random() * 0.12 + 0.06,
-        kind: ["diamond", "triangle", "ring"][Math.floor(Math.random() * 3)] as
+        alpha: Math.random() * 0.16 + 0.08,
+        kind: ["diamond", "triangle", "ring", "star", "cross"][Math.floor(Math.random() * 5)] as
           | "diamond"
           | "triangle"
-          | "ring",
+          | "ring"
+          | "star"
+          | "cross",
         color: glyphColors[Math.floor(Math.random() * glyphColors.length)],
       }));
     };
@@ -165,7 +180,7 @@ export function InteractiveBackground() {
       ctx.fillStyle = glyph.color;
       ctx.lineWidth = 1.2;
       ctx.shadowColor = glyph.color;
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = 24;
 
       if (glyph.kind === "diamond") {
         ctx.beginPath();
@@ -181,6 +196,30 @@ export function InteractiveBackground() {
         ctx.lineTo(size / 2, size / 2);
         ctx.lineTo(-size / 2, size / 2);
         ctx.closePath();
+        ctx.stroke();
+      } else if (glyph.kind === "star") {
+        ctx.beginPath();
+        for (let i = 0; i < 5; i += 1) {
+          const outerAngle = (i * Math.PI * 2) / 5 - Math.PI / 2;
+          const innerAngle = outerAngle + Math.PI / 5;
+          const outerX = Math.cos(outerAngle) * (size / 2);
+          const outerY = Math.sin(outerAngle) * (size / 2);
+          const innerX = Math.cos(innerAngle) * (size * 0.22);
+          const innerY = Math.sin(innerAngle) * (size * 0.22);
+
+          if (i === 0) ctx.moveTo(outerX, outerY);
+          else ctx.lineTo(outerX, outerY);
+
+          ctx.lineTo(innerX, innerY);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      } else if (glyph.kind === "cross") {
+        ctx.beginPath();
+        ctx.moveTo(-size / 2, 0);
+        ctx.lineTo(size / 2, 0);
+        ctx.moveTo(0, -size / 2);
+        ctx.lineTo(0, size / 2);
         ctx.stroke();
       } else {
         ctx.beginPath();
@@ -244,11 +283,11 @@ export function InteractiveBackground() {
           const dy = mouseY - y;
           const distance = Math.hypot(dx, dy);
 
-          if (distance < 180) {
-            const influence = 1 - distance / 180;
-            pullX = dx * influence * 0.12;
-            pullY = dy * influence * 0.12;
-            lineAlpha = influence * 0.16;
+          if (distance < 240) {
+            const influence = 1 - distance / 240;
+            pullX = dx * influence * 0.2;
+            pullY = dy * influence * 0.2;
+            lineAlpha = influence * 0.3;
           }
         }
 
@@ -289,7 +328,7 @@ export function InteractiveBackground() {
           const distance = Math.hypot(dx, dy);
 
           if (distance < 95) {
-            const alpha = (1 - distance / 95) * 0.16;
+            const alpha = (1 - distance / 95) * 0.24;
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -300,8 +339,8 @@ export function InteractiveBackground() {
 
         if (active) {
           const mouseDistance = Math.hypot(mouseX - source.x, mouseY - source.y);
-          if (mouseDistance < 150) {
-            const alpha = (1 - mouseDistance / 150) * 0.24;
+          if (mouseDistance < 200) {
+            const alpha = (1 - mouseDistance / 200) * 0.45;
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -330,6 +369,51 @@ export function InteractiveBackground() {
       }
     };
 
+    const drawMouseBloom = (time: number) => {
+      const { x: mouseX, y: mouseY, active } = mouseRef.current;
+      if (!active) return;
+
+      const pulse = 0.65 + Math.sin(time * 0.008) * 0.18;
+
+      ctx.save();
+
+      const core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 72);
+      core.addColorStop(0, "rgba(255,255,255,0.9)");
+      core.addColorStop(0.18, "rgba(147,197,253,0.45)");
+      core.addColorStop(0.42, "rgba(168,85,247,0.2)");
+      core.addColorStop(1, "rgba(168,85,247,0)");
+      ctx.fillStyle = core;
+      ctx.globalAlpha = pulse;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 72, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 10; i += 1) {
+        const angle = time * 0.0014 + (i * Math.PI * 2) / 10;
+        const inner = 18;
+        const outer = 46 + Math.sin(time * 0.003 + i) * 7;
+        const alpha = 0.16 + Math.sin(time * 0.004 + i) * 0.05;
+        ctx.strokeStyle = `rgba(191, 219, 254, ${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(mouseX + Math.cos(angle) * inner, mouseY + Math.sin(angle) * inner);
+        ctx.lineTo(mouseX + Math.cos(angle) * outer, mouseY + Math.sin(angle) * outer);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(191, 219, 254, 0.22)";
+      ctx.shadowColor = "rgba(125, 211, 252, 0.5)";
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 28 + Math.sin(time * 0.006) * 4, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 48 + Math.cos(time * 0.004) * 5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+    };
+
     const draw = (time: number) => {
       ctx.clearRect(0, 0, width, height);
 
@@ -339,6 +423,7 @@ export function InteractiveBackground() {
 
       glyphs.forEach((glyph) => drawGlyph(glyph, time, scrollProgress));
       drawParticleWeb(renderedParticles);
+      drawMouseBloom(time);
       drawParticles(renderedParticles);
 
       animationId = requestAnimationFrame(draw);
@@ -363,35 +448,52 @@ export function InteractiveBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden>
+    <div
+      className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 ${
+        lightMode ? "light-theme-canvas" : ""
+      }`}
+      aria-hidden
+    >
       <div className="absolute inset-0 bg-mesh-base" />
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(59,130,246,0.22),transparent_32%),radial-gradient(circle_at_86%_22%,rgba(168,85,247,0.18),transparent_28%),radial-gradient(circle_at_48%_78%,rgba(244,114,182,0.14),transparent_30%)]" />
+      {lightMode ? <div className="absolute inset-0 light-theme-wash" /> : null}
+      {lightMode ? <div className="absolute inset-0 light-theme-colorwave" /> : null}
 
       <div
-        className="absolute inset-0 opacity-80 mix-blend-screen"
+        className="absolute inset-0"
         style={{
+          background: lightMode
+            ? "radial-gradient(circle at 10% 12%, rgba(59,130,246,0.24), transparent 26%), radial-gradient(circle at 84% 18%, rgba(168,85,247,0.22), transparent 24%), radial-gradient(circle at 46% 82%, rgba(244,114,182,0.18), transparent 28%), radial-gradient(circle at 64% 36%, rgba(45,212,191,0.14), transparent 18%)"
+            : "radial-gradient(circle at 12% 10%,rgba(59,130,246,0.22),transparent 32%),radial-gradient(circle at 86% 22%,rgba(168,85,247,0.18),transparent 28%),radial-gradient(circle at 48% 78%,rgba(244,114,182,0.14),transparent 30%)",
+        }}
+      />
+
+      <div
+        className="absolute inset-0 mix-blend-screen"
+        style={{
+          opacity: lightMode ? 1 : 0.8,
           background: `
-            radial-gradient(260px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(96,165,250,0.18) 0%, rgba(96,165,250,0.08) 34%, transparent 68%),
-            radial-gradient(520px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(168,85,247,0.12) 0%, rgba(236,72,153,0.06) 38%, transparent 72%)
+            radial-gradient(260px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.24)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.12)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
+            radial-gradient(520px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.16)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.09)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
           `,
         }}
       />
 
       <div
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0"
         style={{
+          opacity: lightMode ? 0.82 : 0.6,
           background: `
-            conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.1), rgba(168,85,247,0.06), rgba(45,212,191,0.08), rgba(59,130,246,0.1))
+            conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.15)" : "rgba(59,130,246,0.1)"}, ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.06)"}, ${lightMode ? "rgba(45,212,191,0.11)" : "rgba(45,212,191,0.08)"}, ${lightMode ? "rgba(59,130,246,0.15)" : "rgba(59,130,246,0.1)"})
           `,
           maskImage:
-            "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
+            `radial-gradient(${lightMode ? "340px" : "280px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)`,
           WebkitMaskImage:
-            "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
+            `radial-gradient(${lightMode ? "340px" : "280px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)`,
         }}
       />
 
-      <canvas ref={canvasRef} className="absolute inset-0 opacity-95" />
+      <canvas ref={canvasRef} className={`absolute inset-0 ${lightMode ? "opacity-100" : "opacity-95"}`} />
 
       <div className="absolute inset-0 vignette" />
     </div>

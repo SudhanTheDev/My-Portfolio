@@ -16,11 +16,9 @@ export const metadata = {
 const themeScript = `
   (function () {
     try {
-      var theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.documentElement.classList.add('light-mode');
-        document.documentElement.style.colorScheme = 'light';
-      }
+      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.add('light-mode');
+      document.documentElement.style.colorScheme = 'light';
     } catch (e) {}
   })();
 `;

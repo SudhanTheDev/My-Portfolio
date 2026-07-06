@@ -55,13 +55,13 @@ export function SkillsSection() {
               transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
               className="group"
             >
+              <h3 className="text-xl font-medium mb-6 text-white group-hover:text-shimmer transition-all">
+                {category.title}
+              </h3>
               <motion.div
                 whileHover={{ y: -4 }}
                 className="h-full pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500"
               >
-                <h3 className="text-xl font-medium mb-6 text-white group-hover:text-shimmer transition-all">
-                  {category.title}
-                </h3>
                 <ul className="space-y-3">
                   {category.skills.map((skill) => (
                     <motion.li

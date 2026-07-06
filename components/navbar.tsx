@@ -78,7 +78,7 @@ export function Navbar() {
                     active={isActive}
                     className={cn(
                       "px-4 py-2",
-                      isActive ? "text-white" : "text-muted"
+                      isActive ? "text-white nav-link-active" : "text-muted"
                     )}
                   >
                     {link.name}
