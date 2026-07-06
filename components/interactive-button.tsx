@@ -66,7 +66,7 @@ export function InteractiveButton({
   const [sparks, setSparks] = useState<Spark[]>([]);
 
   const classes = cn(
-    "btn-interactive relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-[box-shadow,border-color,background] duration-300",
+    "btn-interactive relative inline-flex items-center justify-center gap-2 overflow-hidden px-6 py-3 rounded-xl text-sm font-semibold transition-[box-shadow,border-color,background] duration-300",
     variants[variant],
     disabled && "opacity-50 pointer-events-none",
     className

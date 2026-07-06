@@ -17,19 +17,50 @@ export function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-100px" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+  const [botField, setBotField] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
+    setSubmitError(null);
+    setSubmitting(true);
+
+    const payload = new URLSearchParams({
+      "form-name": "contact",
+      "bot-field": botField,
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+    });
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: payload.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Submission failed");
+      }
+
+      setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
-    }, 3000);
+      setBotField("");
+      window.setTimeout(() => setSubmitted(false), 3000);
+    } catch {
+      setSubmitError("Could not send right now. Please try again or email me directly.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -60,10 +91,29 @@ export function ContactSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+              onSubmit={handleSubmit}
+              className="space-y-6"
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden" aria-hidden="true">
+                <label>
+                  Don&apos;t fill this out:
+                  <input
+                    name="bot-field"
+                    value={botField}
+                    onChange={(e) => setBotField(e.target.value)}
+                  />
+                </label>
+              </p>
               <div>
                 <label className="block text-sm text-zinc-400 mb-2">Name</label>
                 <input
+                  name="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -76,6 +126,7 @@ export function ContactSection() {
               <div>
                 <label className="block text-sm text-zinc-400 mb-2">Email</label>
                 <input
+                  name="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -88,6 +139,7 @@ export function ContactSection() {
               <div>
                 <label className="block text-sm text-zinc-400 mb-2">Your Project</label>
                 <textarea
+                  name="message"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={4}
@@ -100,10 +152,12 @@ export function ContactSection() {
               <InteractiveButton
                 type="submit"
                 variant="primary"
-                disabled={submitted}
+                disabled={submitted || submitting}
                 className="px-8 py-4"
               >
-                {submitted ? (
+                {submitting ? (
+                  "Sending..."
+                ) : submitted ? (
                   <>
                     <CheckCircle className="w-4 h-4" />
                     Message Sent
@@ -112,6 +166,10 @@ export function ContactSection() {
                   "Submit"
                 )}
               </InteractiveButton>
+
+              {submitError && (
+                <p className="text-sm text-rose-300">{submitError}</p>
+              )}
             </form>
           </motion.div>
 

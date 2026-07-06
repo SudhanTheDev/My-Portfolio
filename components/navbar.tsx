@@ -59,15 +59,15 @@ export function Navbar() {
         )}
       >
         <div className={cn(
-          "max-w-7xl mx-auto px-6 lg:px-8 transition-all duration-500",
-          scrolled && "glass-card rounded-2xl mx-4 lg:mx-auto shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+          "w-full px-4 sm:px-6 lg:px-8 transition-all duration-500",
+          scrolled && "glass-card rounded-2xl mx-3 sm:mx-4 shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
         )}>
-          <div className="flex items-center justify-between h-16">
-            <a href="#home" className="hover:opacity-90 transition-opacity">
+          <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <a href="#home" className="justify-self-start hover:opacity-90 transition-opacity">
               <BrandLogo size="md" />
             </a>
 
-            <div className="hidden md:flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/10">
+            <div className="hidden md:flex items-center justify-self-center gap-1 p-1 rounded-xl bg-white/5 border border-white/10">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.href.replace("#", "");
                 return (
@@ -87,7 +87,7 @@ export function Navbar() {
               })}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-self-end gap-3">
               <MusicButton />
               <ThemeToggle />
               <InteractiveButton
