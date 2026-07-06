@@ -19,6 +19,7 @@ export function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitInfo, setSubmitInfo] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,6 +30,7 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitError(null);
+    setSubmitInfo(null);
     setSubmitting(true);
 
     const payload = new URLSearchParams({
@@ -40,6 +42,21 @@ export function ContactSection() {
     });
 
     try {
+      const isLocalhost =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      if (isLocalhost) {
+        const subject = encodeURIComponent(`New project inquiry from ${formData.name}`);
+        const body = encodeURIComponent(
+          `Name: ${formData.name}\nEmail: ${formData.email}\n\nProject:\n${formData.message}`
+        );
+        window.location.href = `mailto:sudhan.bhattarainp@gmail.com?subject=${subject}&body=${body}`;
+        setSubmitInfo("Local preview fallback: your email app was opened with the message.");
+        return;
+      }
+
       const response = await fetch("/", {
         method: "POST",
         headers: {
@@ -169,6 +186,10 @@ export function ContactSection() {
 
               {submitError && (
                 <p className="text-sm text-rose-300">{submitError}</p>
+              )}
+
+              {submitInfo && (
+                <p className="text-sm text-cyan-300">{submitInfo}</p>
               )}
             </form>
           </motion.div>
