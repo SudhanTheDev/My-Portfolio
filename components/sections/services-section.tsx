@@ -33,6 +33,11 @@ export function ServicesSection() {
               key={service.title}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              whileHover={{
+                scale: 1.08,
+                y: -10,
+                transition: { duration: 0.16, delay: 0, ease: "easeOut" },
+              }}
               transition={{ duration: 0.5, delay: 0.05 + index * 0.05 }}
               className="group glow-card p-6"
             >

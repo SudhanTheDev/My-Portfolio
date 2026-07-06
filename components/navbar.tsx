@@ -59,8 +59,8 @@ export function Navbar() {
         )}
       >
         <div className={cn(
-          "w-full px-4 sm:px-6 lg:px-8 transition-all duration-500",
-          scrolled && "glass-card rounded-2xl mx-3 sm:mx-4 shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+          "px-4 sm:px-6 lg:px-8 transition-all duration-500",
+          scrolled && "mx-3 sm:mx-4 glass-card rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
         )}>
           <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
             <a href="#home" className="justify-self-start hover:opacity-90 transition-opacity">
