@@ -95,7 +95,7 @@ export function InteractiveBackground() {
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, lightMode ? 1.2 : 2);
 
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -103,8 +103,12 @@ export function InteractiveBackground() {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const particleCount = Math.min(240, Math.floor((width * height) / 9000));
-      const glyphCount = Math.min(28, Math.floor((width * height) / 56000));
+      const particleCount = lightMode
+        ? Math.min(135, Math.floor((width * height) / 14000))
+        : Math.min(240, Math.floor((width * height) / 9000));
+      const glyphCount = lightMode
+        ? Math.min(14, Math.floor((width * height) / 90000))
+        : Math.min(28, Math.floor((width * height) / 56000));
 
       particles = Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
@@ -284,10 +288,12 @@ export function InteractiveBackground() {
           const dy = mouseY - y;
           const distance = Math.hypot(dx, dy);
 
-          if (distance < 240) {
-            const influence = 1 - distance / 240;
-            pullX = dx * influence * 0.2;
-            pullY = dy * influence * 0.2;
+          const mouseInfluenceRadius = lightMode ? 170 : 240;
+
+          if (distance < mouseInfluenceRadius) {
+            const influence = 1 - distance / mouseInfluenceRadius;
+            pullX = dx * influence * (lightMode ? 0.12 : 0.2);
+            pullY = dy * influence * (lightMode ? 0.12 : 0.2);
             lineAlpha = influence * 0.3;
           }
         }
@@ -320,18 +326,21 @@ export function InteractiveBackground() {
 
       ctx.save();
       ctx.lineWidth = 0.6;
+      const neighborWindow = lightMode ? 5 : 10;
+      const connectionDistance = lightMode ? 72 : 95;
+      const mouseConnectionDistance = lightMode ? 140 : 200;
 
       for (let i = 0; i < rendered.length; i += 1) {
         const source = rendered[i];
 
-        for (let j = i + 1; j < Math.min(rendered.length, i + 10); j += 1) {
+        for (let j = i + 1; j < Math.min(rendered.length, i + neighborWindow); j += 1) {
           const target = rendered[j];
           const dx = target.x - source.x;
           const dy = target.y - source.y;
           const distance = Math.hypot(dx, dy);
 
-          if (distance < 95) {
-            const alpha = (1 - distance / 95) * 0.24;
+          if (distance < connectionDistance) {
+            const alpha = (1 - distance / connectionDistance) * (lightMode ? 0.16 : 0.24);
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -342,8 +351,8 @@ export function InteractiveBackground() {
 
         if (active) {
           const mouseDistance = Math.hypot(mouseX - source.x, mouseY - source.y);
-          if (mouseDistance < 200) {
-            const alpha = (1 - mouseDistance / 200) * 0.45;
+          if (mouseDistance < mouseConnectionDistance) {
+            const alpha = (1 - mouseDistance / mouseConnectionDistance) * (lightMode ? 0.24 : 0.45);
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -380,39 +389,43 @@ export function InteractiveBackground() {
 
       ctx.save();
 
-      const core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 72);
+      const core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, lightMode ? 52 : 72);
       core.addColorStop(0, "rgba(255,255,255,0.9)");
       core.addColorStop(0.18, "rgba(147,197,253,0.45)");
       core.addColorStop(0.42, "rgba(168,85,247,0.2)");
       core.addColorStop(1, "rgba(168,85,247,0)");
       ctx.fillStyle = core;
-      ctx.globalAlpha = pulse;
+      ctx.globalAlpha = lightMode ? pulse * 0.65 : pulse;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 72, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, lightMode ? 52 : 72, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.lineWidth = 1;
-      for (let i = 0; i < 10; i += 1) {
-        const angle = time * 0.0014 + (i * Math.PI * 2) / 10;
-        const inner = 18;
-        const outer = 46 + Math.sin(time * 0.003 + i) * 7;
-        const alpha = 0.16 + Math.sin(time * 0.004 + i) * 0.05;
-        ctx.strokeStyle = `rgba(191, 219, 254, ${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(mouseX + Math.cos(angle) * inner, mouseY + Math.sin(angle) * inner);
-        ctx.lineTo(mouseX + Math.cos(angle) * outer, mouseY + Math.sin(angle) * outer);
-        ctx.stroke();
+      if (!lightMode) {
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 10; i += 1) {
+          const angle = time * 0.0014 + (i * Math.PI * 2) / 10;
+          const inner = 18;
+          const outer = 46 + Math.sin(time * 0.003 + i) * 7;
+          const alpha = 0.16 + Math.sin(time * 0.004 + i) * 0.05;
+          ctx.strokeStyle = `rgba(191, 219, 254, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(mouseX + Math.cos(angle) * inner, mouseY + Math.sin(angle) * inner);
+          ctx.lineTo(mouseX + Math.cos(angle) * outer, mouseY + Math.sin(angle) * outer);
+          ctx.stroke();
+        }
       }
 
       ctx.strokeStyle = "rgba(191, 219, 254, 0.22)";
       ctx.shadowColor = "rgba(125, 211, 252, 0.5)";
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = lightMode ? 10 : 18;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 28 + Math.sin(time * 0.006) * 4, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, (lightMode ? 20 : 28) + Math.sin(time * 0.006) * 4, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 48 + Math.cos(time * 0.004) * 5, 0, Math.PI * 2);
-      ctx.stroke();
+      if (!lightMode) {
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 48 + Math.cos(time * 0.004) * 5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
 
       ctx.restore();
     };
@@ -448,7 +461,7 @@ export function InteractiveBackground() {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, []);
+  }, [lightMode]);
 
   return (
     <div
@@ -474,27 +487,29 @@ export function InteractiveBackground() {
       <div
         className="absolute inset-0 mix-blend-screen"
         style={{
-          opacity: lightMode ? 1 : 0.8,
+          opacity: lightMode ? 0.82 : 0.8,
           background: `
-            radial-gradient(260px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.24)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.12)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
-            radial-gradient(520px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.16)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.09)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
+            radial-gradient(${lightMode ? "220px" : "260px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.18)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.08)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
+            radial-gradient(${lightMode ? "380px" : "520px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.05)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
           `,
         }}
       />
 
-      <div
-        className="absolute inset-0"
-        style={{
-          opacity: lightMode ? 0.82 : 0.6,
-          background: `
-            conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.15)" : "rgba(59,130,246,0.1)"}, ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.06)"}, ${lightMode ? "rgba(45,212,191,0.11)" : "rgba(45,212,191,0.08)"}, ${lightMode ? "rgba(59,130,246,0.15)" : "rgba(59,130,246,0.1)"})
-          `,
-          maskImage:
-            `radial-gradient(${lightMode ? "340px" : "280px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)`,
-          WebkitMaskImage:
-            `radial-gradient(${lightMode ? "340px" : "280px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)`,
-        }}
-      />
+      {!lightMode ? (
+        <div
+          className="absolute inset-0"
+          style={{
+            opacity: 0.6,
+            background: `
+              conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.1), rgba(168,85,247,0.06), rgba(45,212,191,0.08), rgba(59,130,246,0.1))
+            `,
+            maskImage:
+              "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
+            WebkitMaskImage:
+              "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
+          }}
+        />
+      ) : null}
 
       <canvas ref={canvasRef} className={`absolute inset-0 ${lightMode ? "opacity-100" : "opacity-95"}`} />
 

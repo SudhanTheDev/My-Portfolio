@@ -79,7 +79,7 @@
   }
 
   html.light-mode .light-theme-wash {
-    opacity: 0.92;
+    opacity: 0.88;
     background:
       linear-gradient(
         135deg,
@@ -91,13 +91,13 @@
         rgba(224, 255, 238, 0.97) 86%,
         rgba(236, 240, 255, 0.98) 100%
       );
-    background-size: 180% 180%;
-    animation: light-theme-spectrum 12s ease-in-out infinite alternate;
-    will-change: transform, background-position, filter;
+    background-size: 145% 145%;
+    animation: light-theme-spectrum 9s ease-in-out infinite alternate;
+    will-change: transform, background-position;
   }
 
   html.light-mode .light-theme-colorwave {
-    opacity: 0.38;
+    opacity: 0.26;
     mix-blend-mode: soft-light;
     background:
       radial-gradient(circle at 12% 24%, rgba(255, 125, 156, 0.3) 0%, transparent 28%),
@@ -110,10 +110,10 @@
       radial-gradient(circle at 44% 18%, rgba(125, 211, 252, 0.2) 0%, transparent 18%),
       radial-gradient(circle at 18% 46%, rgba(192, 132, 252, 0.18) 0%, transparent 16%),
       radial-gradient(circle at 88% 64%, rgba(251, 146, 60, 0.18) 0%, transparent 18%);
-    filter: saturate(1.12);
-    background-size: 140% 140%;
-    animation: light-theme-drift 10s ease-in-out infinite alternate;
-    will-change: transform, background-position, filter;
+    filter: saturate(1.04);
+    background-size: 125% 125%;
+    animation: light-theme-drift 8s ease-in-out infinite alternate;
+    will-change: transform, background-position;
   }
 
   html.light-mode .cursor-glow-core,
@@ -151,7 +151,7 @@
       0 20px 45px rgba(148, 163, 184, 0.22),
       0 0 0 1px rgba(255,255,255,0.45) inset,
       0 0 40px rgba(191, 219, 254, 0.18);
-    backdrop-filter: blur(24px);
+    backdrop-filter: blur(14px);
   }
 
   html.light-mode .glow-card:hover {
@@ -640,27 +640,22 @@
   0% {
     transform: translate3d(0, 0, 0) scale(1.04) rotate(0.001deg);
     background-position: 0% 0%;
-    filter: hue-rotate(0deg) saturate(1.06) brightness(1.01);
   }
   25% {
     transform: translate3d(2.5%, -1.5%, 0) scale(1.08) rotate(1deg);
     background-position: 32% 16%;
-    filter: hue-rotate(-18deg) saturate(1.1) brightness(1.02);
   }
   50% {
     transform: translate3d(-2%, 3%, 0) scale(1.11) rotate(-1.2deg);
     background-position: 64% 44%;
-    filter: hue-rotate(-34deg) saturate(1.14) brightness(1.03);
   }
   75% {
     transform: translate3d(3%, 1.5%, 0) scale(1.08) rotate(1deg);
     background-position: 86% 72%;
-    filter: hue-rotate(22deg) saturate(1.18) brightness(1.02);
   }
   100% {
     transform: translate3d(-2.5%, -2%, 0) scale(1.1) rotate(-0.8deg);
     background-position: 100% 100%;
-    filter: hue-rotate(42deg) saturate(1.22) brightness(1.04);
   }
 }
 
@@ -668,32 +663,26 @@
   0% {
     transform: translate3d(0, 0, 0) scale(1.02) rotate(0.001deg);
     background-position: 0% 0%;
-    filter: hue-rotate(0deg) saturate(1.02) brightness(1);
   }
   20% {
     transform: translate3d(1.8%, -1.2%, 0) scale(1.04) rotate(0.6deg);
     background-position: 22% 16%;
-    filter: hue-rotate(10deg) saturate(1.06) brightness(1.01);
   }
   40% {
     transform: translate3d(-1.6%, 2.4%, 0) scale(1.06) rotate(-0.8deg);
     background-position: 50% 38%;
-    filter: hue-rotate(22deg) saturate(1.1) brightness(1.02);
   }
   60% {
     transform: translate3d(2%, 1.6%, 0) scale(1.05) rotate(0.7deg);
     background-position: 72% 62%;
-    filter: hue-rotate(34deg) saturate(1.14) brightness(1.03);
   }
   80% {
     transform: translate3d(-1.8%, -1.2%, 0) scale(1.04) rotate(-0.6deg);
     background-position: 88% 84%;
-    filter: hue-rotate(48deg) saturate(1.18) brightness(1.02);
   }
   100% {
     transform: translate3d(0, 0, 0) scale(1.02) rotate(0.001deg);
     background-position: 100% 100%;
-    filter: hue-rotate(60deg) saturate(1.2) brightness(1.03);
   }
 }
 
