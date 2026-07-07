@@ -257,10 +257,10 @@ export function ContactSection() {
               </span>
               <a
                 href="mailto:sudhan.bhattarainp@gmail.com"
-                className="group inline-flex items-center gap-2 text-xl text-white hover:text-zinc-300 transition-colors duration-300"
+                className="group inline-flex items-center gap-2 break-all text-xl text-foreground transition-colors duration-300 hover:text-blue-500 sm:break-normal"
               >
                 sudhan.bhattarainp@gmail.com
-                <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors duration-300" />
+                <ArrowUpRight className="w-5 h-5 text-zinc-500 transition-colors duration-300 group-hover:text-blue-500" />
               </a>
             </div>
 

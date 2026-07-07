@@ -13,7 +13,11 @@ const sizes = {
 
 export function BrandLogo({ className, size = "md" }: BrandLogoProps) {
   return (
-    <span className={cn("relative inline-block font-brand font-extrabold uppercase", sizes[size], className)}>
+    <span className={cn("brand-logo-glow relative inline-block font-brand font-extrabold uppercase", sizes[size], className)}>
+      <span
+        className="brand-logo-halo absolute inset-[-0.18em] rounded-full opacity-90 blur-2xl"
+        aria-hidden
+      />
       <span
         className="brand-logo-aura absolute inset-0 blur-lg opacity-70 bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent select-none"
         aria-hidden

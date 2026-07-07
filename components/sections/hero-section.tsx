@@ -1,12 +1,104 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { HeroProfile } from "@/components/hero-profile";
 import { GlowButton } from "@/components/glow-button";
 
 const repeatViewport = { once: true, amount: 0.35 } as const;
 
+const heroNameStyles = [
+  {
+    id: "default",
+    className: "hero-name-default",
+  },
+  {
+    id: "black-chancery",
+    className: "hero-name-black-chancery",
+  },
+  {
+    id: "black-mustang",
+    className: "hero-name-black-mustang",
+  },
+  {
+    id: "zeus-borne",
+    className: "hero-name-zeus-borne",
+  },
+  {
+    id: "vampire-wars",
+    className: "hero-name-vampire-wars",
+  },
+  {
+    id: "ancient",
+    className: "hero-name-ancient",
+  },
+  {
+    id: "dicaten",
+    className: "hero-name-dicaten",
+  },
+  {
+    id: "sanguine-frost",
+    className: "hero-name-sanguine-frost",
+  },
+  {
+    id: "tarmiles-action",
+    className: "hero-name-tarmiles-action",
+  },
+  {
+    id: "cheri",
+    className: "hero-name-cheri",
+  },
+  {
+    id: "blue-water",
+    className: "hero-name-blue-water",
+  },
+  {
+    id: "cheese-milky",
+    className: "hero-name-cheese-milky",
+  },
+  {
+    id: "muthiara",
+    className: "hero-name-muthiara",
+  },
+  {
+    id: "eternelo",
+    className: "hero-name-eternelo",
+  },
+  {
+    id: "starborn",
+    className: "hero-name-starborn",
+  },
+  {
+    id: "lemon-milk",
+    className: "hero-name-lemon-milk",
+  },
+  {
+    id: "porky",
+    className: "hero-name-porky",
+  },
+  {
+    id: "brother-signature",
+    className: "hero-name-brother-signature",
+  },
+  {
+    id: "singsong",
+    className: "hero-name-singsong",
+  },
+];
+
 export function HeroSection() {
+  const [activeNameStyle, setActiveNameStyle] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveNameStyle((current) => (current + 1) % heroNameStyles.length);
+    }, 10500);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const currentNameStyle = heroNameStyles[activeNameStyle];
+
   return (
     <section
       id="home"
@@ -80,9 +172,22 @@ export function HeroSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={repeatViewport}
                 transition={{ duration: 0.5, delay: 0.32 }}
-                className="block text-shimmer drop-shadow-[0_0_40px_rgba(168,85,247,0.7)]"
+                className="block drop-shadow-[0_0_40px_rgba(168,85,247,0.7)]"
               >
-                Sudhan.
+                <span className="hero-name-frame inline-flex h-[1.38em] w-[6.4ch] items-center overflow-visible">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={currentNameStyle.id}
+                      initial={{ opacity: 0, scale: 0.985, filter: "blur(18px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 1.015, filter: "blur(16px)" }}
+                      transition={{ duration: 1.45, ease: [0.22, 1, 0.36, 1] }}
+                      className={`hero-name-style text-shimmer absolute inset-0 inline-flex items-center justify-start whitespace-nowrap ${currentNameStyle.className}`}
+                    >
+                      Sudhan
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
               </motion.span>
             </h1>
 

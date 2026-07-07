@@ -2,6 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "HeroBlackChancery";
+  src: url("/fonts/hero/black_chancery/BLKCHCRY.TTF") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroBlackMustang";
+  src: url("/fonts/hero/black_mustang/Black%20Mustang.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroZeusBorne";
+  src: url("/fonts/hero/zeus_borne/Zeus%20Borne.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroVampireWars";
+  src: url("/fonts/hero/vampire_wars/Vampire%20Wars.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroAncient";
+  src: url("/fonts/hero/ancient/Ancient%20Medium.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroDicaten";
+  src: url("/fonts/hero/dicaten/Dicaten%20Demo.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroSanguineFrost";
+  src: url("/fonts/hero/sanguine_frost/Sanguine%20Frost.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroTarmilesAction";
+  src: url("/fonts/hero/tarmiles_action/TarmilesAction_PERSONAL_USE_ONLY.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroCheri";
+  src: url("/fonts/hero/cheri/CHERI___.TTF") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroBlueWater";
+  src: url("/fonts/hero/blue_water/Blue%20Water.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroCheeseMilky";
+  src: url("/fonts/hero/cheese_milky/Cheese%20Milky.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroMuthiara";
+  src: url("/fonts/hero/muthiara/Muthiara%20demo%20version.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroEternalo";
+  src: url("/fonts/hero/eternalo/Eternalo.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroStarborn";
+  src: url("/fonts/hero/starborn/Starborn.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroLemonMilk";
+  src: url("/fonts/hero/lemon_milk/LEMONMILK-Bold.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroPorky";
+  src: url("/fonts/hero/porky_s/PORKYS_.TTF") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroBrotherSignature";
+  src: url("/fonts/hero/brother_signature/Brother%20Signature.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HeroSingsong";
+  src: url("/fonts/hero/singsong/Singsong.otf") format("opentype");
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: #030014;
@@ -172,7 +280,10 @@
     background-image: linear-gradient(120deg, #2563eb 0%, #7c3aed 22%, #ec4899 46%, #14b8a6 68%, #2563eb 100%);
     background-size: 220% auto;
     animation: shimmer-text 7s linear infinite;
-    text-shadow: 0 0 16px rgba(255,255,255,0.42);
+    text-shadow:
+      0 0 18px rgba(255,255,255,0.52),
+      0 0 28px rgba(96,165,250,0.32),
+      0 0 42px rgba(168,85,247,0.28);
     filter: saturate(1.12);
   }
 
@@ -180,7 +291,7 @@
     opacity: 0.95;
     background-image: linear-gradient(120deg, rgba(37,99,235,0.95) 0%, rgba(124,58,237,0.95) 25%, rgba(236,72,153,0.95) 50%, rgba(20,184,166,0.9) 75%, rgba(37,99,235,0.95) 100%);
     background-size: 220% auto;
-    animation: shimmer-text 8s linear infinite;
+    animation: shimmer-text 8s linear infinite, brand-aura-pulse 4.8s ease-in-out infinite;
   }
 
   html.light-mode .text-shimmer {
@@ -396,17 +507,17 @@
   .text-shimmer {
     background-image: linear-gradient(
       135deg,
-      #ffffff 0%,
-      #93c5fd 25%,
-      #c4b5fd 50%,
-      #f9a8d4 75%,
-      #ffffff 100%
+      #f8fbff 0%,
+      #d8eafe 22%,
+      #e6dcff 48%,
+      #f8d9ee 74%,
+      #eef8ff 100%
     );
-    background-size: 200% auto;
+    background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: shimmer-text 6s linear infinite;
+    animation: hero-name-glow 6.8s ease-in-out infinite;
   }
 
   .project-emoji {
@@ -416,6 +527,168 @@
     background-clip: border-box !important;
     -webkit-text-fill-color: currentColor !important;
     text-shadow: none !important;
+  }
+
+  .brand-logo-glow {
+    isolation: isolate;
+  }
+
+  .brand-logo-halo {
+    z-index: -1;
+    background:
+      radial-gradient(circle, rgba(96,165,250,0.34) 0%, rgba(168,85,247,0.3) 36%, rgba(244,114,182,0.24) 58%, transparent 78%);
+    animation: brand-halo-breathe 4.8s ease-in-out infinite;
+  }
+
+  .hero-name-style {
+    line-height: 1.06;
+    padding-block: 0.1em 0.16em;
+    transform-origin: center bottom;
+    will-change: transform, filter, opacity;
+  }
+
+  .hero-name-frame {
+    position: relative;
+    overflow: visible;
+  }
+
+  .hero-name-default {
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+    font-size: 0.96em;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-name-black-chancery {
+    font-family: "HeroBlackChancery", "Times New Roman", serif;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+    text-shadow:
+      0 0 16px rgba(255,255,255,0.12),
+      0 0 26px rgba(99,102,241,0.18);
+  }
+
+  .hero-name-black-mustang {
+    font-family: "HeroBlackMustang", Impact, sans-serif;
+    font-size: 0.78em;
+    letter-spacing: 0.055em;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .hero-name-zeus-borne {
+    font-family: "HeroZeusBorne", Impact, sans-serif;
+    font-size: 0.82em;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+
+  .hero-name-vampire-wars {
+    font-family: "HeroVampireWars", Impact, sans-serif;
+    font-size: 0.82em;
+    letter-spacing: 0.034em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .hero-name-ancient {
+    font-family: "HeroAncient", Georgia, serif;
+    font-size: 0.92em;
+    letter-spacing: 0.012em;
+    font-weight: 700;
+  }
+
+  .hero-name-dicaten {
+    font-family: "HeroDicaten", Georgia, serif;
+    font-size: 0.9em;
+    letter-spacing: 0.026em;
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  .hero-name-sanguine-frost {
+    font-family: "HeroSanguineFrost", Impact, sans-serif;
+    font-size: 0.82em;
+    letter-spacing: 0.045em;
+    font-weight: 700;
+  }
+
+  .hero-name-tarmiles-action {
+    font-family: "HeroTarmilesAction", Impact, sans-serif;
+    font-size: 0.8em;
+    letter-spacing: 0.036em;
+    font-weight: 700;
+  }
+
+  .hero-name-cheri {
+    font-family: "HeroCheri", Georgia, serif;
+    font-size: 0.92em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+
+  .hero-name-blue-water {
+    font-family: "HeroBlueWater", "Trebuchet MS", sans-serif;
+    font-size: 0.9em;
+    letter-spacing: 0.018em;
+    font-weight: 700;
+  }
+
+  .hero-name-cheese-milky {
+    font-family: "HeroCheeseMilky", "Trebuchet MS", sans-serif;
+    font-size: 0.88em;
+    letter-spacing: 0.016em;
+    font-weight: 700;
+  }
+
+  .hero-name-muthiara {
+    font-family: "HeroMuthiara", Georgia, serif;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+
+  .hero-name-eternelo {
+    font-family: "HeroEternalo", "Times New Roman", serif;
+    font-size: 0.88em;
+    letter-spacing: 0.022em;
+    font-weight: 700;
+  }
+
+  .hero-name-starborn {
+    font-family: "HeroStarborn", Impact, sans-serif;
+    font-size: 0.84em;
+    letter-spacing: 0.042em;
+    font-weight: 700;
+  }
+
+  .hero-name-lemon-milk {
+    font-family: "HeroLemonMilk", Arial, sans-serif;
+    font-size: 0.84em;
+    letter-spacing: 0.045em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .hero-name-porky {
+    font-family: "HeroPorky", "Trebuchet MS", sans-serif;
+    font-size: 0.84em;
+    letter-spacing: 0.038em;
+    font-weight: 700;
+  }
+
+  .hero-name-brother-signature {
+    font-family: "HeroBrotherSignature", Georgia, serif;
+    font-size: 0.94em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+
+  .hero-name-singsong {
+    font-family: "HeroSingsong", Georgia, serif;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
   }
 
   .glass-effect {
@@ -455,6 +728,45 @@
 
   .grayscale-to-color:hover {
     filter: grayscale(0%) brightness(1.05) saturate(1.1);
+  }
+}
+
+@keyframes brand-halo-breathe {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(0.94);
+    filter: blur(24px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: blur(32px);
+  }
+}
+
+@keyframes brand-aura-pulse {
+  0%, 100% {
+    opacity: 0.76;
+    filter: blur(12px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(18px);
+  }
+}
+
+@keyframes hero-name-glow {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+    text-shadow:
+      0 0 14px rgba(255,255,255,0.1),
+      0 0 26px rgba(168,85,247,0.1);
+  }
+  50% {
+    filter: brightness(1.05) saturate(1.04);
+    text-shadow:
+      0 0 18px rgba(255,255,255,0.16),
+      0 0 30px rgba(96,165,250,0.16);
   }
 }
 
