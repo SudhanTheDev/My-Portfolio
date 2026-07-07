@@ -5,6 +5,16 @@ import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from
 import { useEffect, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
 import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const PROFILE_IMAGES = [
   { src: "/profile.jpg", position: "center 18%" },
@@ -13,10 +23,49 @@ const PROFILE_IMAGES = [
   { src: "/profile-gallery/photo-8.jpg", position: "center 18%" },
 ];
 
+const socialLinks = [
+  {
+    name: "GitHub",
+    href: "https://github.com/Sujan-Nepal",
+    icon: Github,
+    destination: "GitHub profile",
+    accent: "hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)]",
+    iconClass: "group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)]",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/",
+    icon: Linkedin,
+    destination: "LinkedIn profile",
+    accent: "hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)]",
+    iconClass: "group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)]",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/suzzy.3x3",
+    icon: Instagram,
+    destination: "Instagram profile",
+    accent: "hover:shadow-[0_0_30px_rgba(236,72,153,0.6),0_0_60px_rgba(236,72,153,0.3)]",
+    iconClass: "group-hover:drop-shadow-[0_0_12px_rgba(236,72,153,1)]",
+  },
+  {
+    name: "Email",
+    href: "mailto:sudhan.bhattarainp@gmail.com",
+    icon: Mail,
+    destination: "email draft",
+    accent: "hover:shadow-[0_0_30px_rgba(34,211,238,0.6),0_0_60px_rgba(34,211,238,0.3)]",
+    iconClass: "group-hover:drop-shadow-[0_0_12px_rgba(34,211,238,1)]",
+  },
+] as const;
+
 export function HeroProfile() {
   const [crownHovered, setCrownHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(PROFILE_IMAGES.map((image, index) => [image.src, index === 0]))
+  );
   const [isInteractive, setIsInteractive] = useState(false);
+  const [pendingLink, setPendingLink] = useState<(typeof socialLinks)[number] | null>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -47,11 +96,54 @@ export function HeroProfile() {
     if (!isInteractive) return;
 
     const intervalId = window.setInterval(() => {
-      setActiveImage((current) => (current + 1) % PROFILE_IMAGES.length);
-    }, 7000);
+      setActiveImage((current) => {
+        const nextIndex = (current + 1) % PROFILE_IMAGES.length;
+        const nextImage = PROFILE_IMAGES[nextIndex];
+
+        if (!loadedImages[nextImage.src]) {
+          return current;
+        }
+
+        return nextIndex;
+      });
+    }, 12000);
 
     return () => window.clearInterval(intervalId);
-  }, [isInteractive]);
+  }, [isInteractive, loadedImages]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    PROFILE_IMAGES.forEach((image) => {
+      if (loadedImages[image.src]) return;
+
+      const preloader = new window.Image();
+      preloader.src = image.src;
+      preloader.onload = () => {
+        setLoadedImages((current) => ({ ...current, [image.src]: true }));
+      };
+    });
+  }, [loadedImages]);
+
+  const handleSocialClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    link: (typeof socialLinks)[number]
+  ) => {
+    event.preventDefault();
+    setPendingLink(link);
+  };
+
+  const handleProceedToLink = () => {
+    if (!pendingLink || typeof window === "undefined") return;
+
+    if (pendingLink.href.startsWith("mailto:")) {
+      window.location.href = pendingLink.href;
+    } else {
+      window.open(pendingLink.href, "_blank", "noopener,noreferrer");
+    }
+
+    setPendingLink(null);
+  };
 
   return (
     <motion.div
@@ -114,26 +206,50 @@ export function HeroProfile() {
 
         <div className="relative rounded-[2rem] p-[3px] bg-gradient-to-br from-blue-400/60 via-violet-500/50 to-fuchsia-500/40 shadow-[0_0_60px_rgba(99,102,241,0.35)]">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.85rem] bg-surface">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={PROFILE_IMAGES[activeImage].src}
-                initial={{ opacity: 0, scale: 1.12, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1.04, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={PROFILE_IMAGES[activeImage].src}
-                  alt="Sudhan Bhattarai"
-                  fill
-                  priority={activeImage === 0}
-                  sizes="(max-width: 768px) 340px, 390px"
-                  className="object-cover scale-105"
-                  style={{ objectPosition: PROFILE_IMAGES[activeImage].position }}
-                />
-              </motion.div>
-            </AnimatePresence>
+            {PROFILE_IMAGES.map((image, index) => {
+              const isVisible = index === activeImage;
+              const isLoaded = loadedImages[image.src];
+
+              return (
+                <motion.div
+                  key={image.src}
+                  initial={false}
+                  animate={
+                    isVisible
+                      ? {
+                          opacity: 1,
+                          scale: 1.04,
+                          filter: "blur(0px)",
+                          zIndex: 2,
+                        }
+                      : {
+                          opacity: 0,
+                          scale: 1.08,
+                          filter: "blur(6px)",
+                          zIndex: 1,
+                        }
+                  }
+                  transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                  style={{ visibility: isLoaded || isVisible ? "visible" : "hidden" }}
+                >
+                  <Image
+                    src={image.src}
+                    alt="Sudhan Bhattarai"
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 340px, 390px"
+                    className="object-cover scale-105"
+                    style={{ objectPosition: image.position }}
+                    onLoad={() => {
+                      setLoadedImages((current) =>
+                        current[image.src] ? current : { ...current, [image.src]: true }
+                      );
+                    }}
+                  />
+                </motion.div>
+              );
+            })}
             <motion.div
               key={`profile-sweep-${activeImage}`}
               initial={{ opacity: 0, x: "-120%" }}
@@ -172,37 +288,50 @@ export function HeroProfile() {
         transition={{ ...transition.default, delay: 0.5 }}
         className="absolute -bottom-20 left-0 right-0 flex items-center justify-center gap-3"
       >
-        <a
-          href="https://github.com/Sujan-Nepal"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)] transition-all duration-300 group"
-        >
-          <Github className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)] transition-colors" />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/sudhan-bhattarai-662769392/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)] transition-all duration-300 group"
-        >
-          <Linkedin className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(59,130,246,1)] transition-colors" />
-        </a>
-        <a
-          href="https://www.instagram.com/suzzy.3x3"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(236,72,153,0.6),0_0_60px_rgba(236,72,153,0.3)] transition-all duration-300 group"
-        >
-          <Instagram className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(236,72,153,1)] transition-colors" />
-        </a>
-        <a
-          href="mailto:sudhan.bhattarainp@gmail.com"
-          className="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(34,211,238,0.6),0_0_60px_rgba(34,211,238,0.3)] transition-all duration-300 group"
-        >
-          <Mail className="w-5 h-5 text-zinc-400 group-hover:text-white group-hover:drop-shadow-[0_0_12px_rgba(34,211,238,1)] transition-colors" />
-        </a>
+        {socialLinks.map((link) => (
+          <a
+            key={link.name}
+            href={link.href}
+            target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+            rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+            onClick={(event) => handleSocialClick(event, link)}
+            className={`w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300 group ${link.accent}`}
+          >
+            <link.icon
+              className={`w-5 h-5 text-zinc-400 group-hover:text-white transition-colors ${link.iconClass}`}
+            />
+          </a>
+        ))}
       </motion.div>
+
+      <AlertDialog open={pendingLink !== null} onOpenChange={(open) => !open && setPendingLink(null)}>
+        <AlertDialogContent className="leave-page-dialog max-w-md border-white/10 bg-[#120a1f]/96 text-white shadow-[0_20px_80px_rgba(3,0,20,0.5)] backdrop-blur-2xl">
+          <AlertDialogHeader className="space-y-3 text-left">
+            <span className="leave-page-dialog-kicker text-xs font-mono uppercase tracking-[0.28em] text-zinc-500">
+              Leave Page
+            </span>
+            <AlertDialogTitle className="leave-page-dialog-title text-2xl font-semibold text-white">
+              Are you sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="leave-page-dialog-description text-sm leading-relaxed text-zinc-300">
+              You&apos;re about to leave this page and open the{" "}
+              <span className="leave-page-dialog-emphasis font-semibold text-white">{pendingLink?.destination}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="mt-2 flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:space-x-0">
+            <AlertDialogCancel className="leave-page-dialog-cancel mt-0 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              Dismiss
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleProceedToLink}
+              className="bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500 text-white shadow-[0_0_28px_rgba(99,102,241,0.32)] hover:opacity-95"
+            >
+              Proceed
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 }

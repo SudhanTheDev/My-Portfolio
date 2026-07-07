@@ -101,6 +101,7 @@ export function GallerySection() {
           {filteredImages.map((image, index) => (
             <motion.button
               key={image.title}
+              data-cursor="Open"
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.9 }}
               transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}

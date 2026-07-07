@@ -63,6 +63,7 @@ export function ProjectsSection() {
             <motion.a
               key={project.title}
               href={project.href}
+              data-cursor="Open"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}

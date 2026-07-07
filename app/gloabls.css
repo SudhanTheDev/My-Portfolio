@@ -737,87 +737,211 @@
   50% { transform: translate(25px, -20px); }
 }
 
+@keyframes page-shake-burst {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  10% {
+    transform: translate3d(-4px, 0, 0) scale(0.9985);
+  }
+  20% {
+    transform: translate3d(4px, 0, 0) scale(0.9985);
+  }
+  32% {
+    transform: translate3d(-3px, 0, 0) scale(0.999);
+  }
+  44% {
+    transform: translate3d(3px, 0, 0) scale(0.999);
+  }
+  58% {
+    transform: translate3d(-1.5px, 0, 0) scale(0.9995);
+  }
+  72% {
+    transform: translate3d(1.5px, 0, 0) scale(0.9995);
+  }
+  86% {
+    transform: translate3d(0, 0, 0) scale(1.0002);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
 .blob-1 { animation: move-blob-1 20s ease-in-out infinite; }
 .blob-2 { animation: move-blob-2 24s ease-in-out infinite; }
 .blob-3 { animation: move-blob-3 22s ease-in-out infinite; }
+
+body.page-shake,
+#page-shell.page-shake {
+  animation: page-shake-burst 0.78s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center;
+  will-change: transform;
+}
 
 .cursor-blob {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Cursor */
-.cursor-dot {
-  background: radial-gradient(circle, #ffffff 0%, #c4b5fd 100%);
-  box-shadow:
-    0 0 10px 2px rgba(255, 255, 255, 0.9),
-    0 0 18px 6px rgba(147, 197, 253, 0.45),
-    0 0 28px 10px rgba(139, 92, 246, 0.25);
-  will-change: transform, opacity;
-}
-
-.cursor-aura {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(147, 197, 253, 0.1) 38%, rgba(139, 92, 246, 0.08) 60%, transparent 74%);
-  box-shadow:
-    0 0 18px rgba(255, 255, 255, 0.12),
-    0 0 34px rgba(147, 197, 253, 0.12),
-    0 0 54px rgba(139, 92, 246, 0.1);
-  will-change: transform;
-  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
-  mix-blend-mode: screen;
-}
-
 .cursor-ring {
-  border: 1px solid rgba(196, 181, 253, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
   box-shadow:
-    inset 0 0 22px rgba(255, 255, 255, 0.05),
-    0 0 18px rgba(96, 165, 250, 0.12),
-    0 0 36px rgba(168, 85, 247, 0.14);
-  will-change: transform;
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 10px 30px rgba(3, 0, 20, 0.18);
+  will-change: transform, opacity, width, height;
+  transition:
+    width 0.24s ease,
+    height 0.24s ease,
+    border-color 0.24s ease,
+    background 0.24s ease,
+    box-shadow 0.24s ease,
+    border-radius 0.24s ease;
 }
 
-.cursor-trail-node {
-  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(125,211,252,0.62) 45%, rgba(168,85,247,0.18) 100%);
-  box-shadow: 0 0 12px rgba(255,255,255,0.3), 0 0 18px rgba(59,130,246,0.2);
+.cursor-ring[data-hovered="true"] {
+  width: 56px !important;
+  height: 56px !important;
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 14px 38px rgba(3, 0, 20, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.cursor-ring[data-intent="type"][data-hovered="true"] {
+  width: 12px !important;
+  height: 28px !important;
+  border-radius: 999px;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 10px 22px rgba(3, 0, 20, 0.12);
+}
+
+.cursor-dot {
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 18px rgba(255, 255, 255, 0.18);
   will-change: transform, opacity;
+  transition: opacity 0.18s ease;
+}
+
+.cursor-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  will-change: transform, opacity;
+  transition: opacity 0.18s ease;
   opacity: 0;
+  text-align: center;
+  pointer-events: none;
+  transform-origin: center;
 }
 
-.cursor-star {
-  width: 8px;
-  height: 8px;
-  background: white;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+.cursor-label[data-hovered="true"] {
+  width: 56px;
+  height: 56px;
+}
+
+.cursor-type-glyph {
+  position: fixed;
+  width: 12px;
+  height: 28px;
+  opacity: 0;
   will-change: transform, opacity;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.12));
+}
+
+.cursor-type-stem {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 2px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 0 10px rgba(255,255,255,0.1);
+}
+
+.cursor-type-cap {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 0 8px rgba(255,255,255,0.08);
+}
+
+.cursor-type-cap-top {
+  top: 3px;
+}
+
+.cursor-type-cap-bottom {
+  bottom: 3px;
 }
 
 html.light-mode .cursor-dot {
-  background: radial-gradient(circle, #0f172a 0%, #1e3a5f 100%);
+  background: rgb(15 23 42);
   box-shadow:
-    0 0 8px 2px rgba(59, 130, 246, 0.7),
-    0 0 16px 4px rgba(99, 102, 241, 0.4),
-    0 0 24px 8px rgba(139, 92, 246, 0.2);
-}
-
-html.light-mode .cursor-aura {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.08) 40%, transparent 70%);
-  box-shadow:
-    0 0 20px rgba(59, 130, 246, 0.15),
-    0 0 40px rgba(99, 102, 241, 0.1),
-    0 0 60px rgba(139, 92, 246, 0.06);
+    0 0 0 1px rgba(15, 23, 42, 0.15),
+    0 0 18px rgba(59, 130, 246, 0.12);
 }
 
 html.light-mode .cursor-ring {
-  border-color: rgba(59, 130, 246, 0.24);
+  border-color: rgba(15, 23, 42, 0.22);
+  background: rgba(255, 255, 255, 0.3);
   box-shadow:
-    inset 0 0 18px rgba(255, 255, 255, 0.12),
-    0 0 16px rgba(59, 130, 246, 0.12),
-    0 0 32px rgba(139, 92, 246, 0.1);
+    0 10px 26px rgba(148, 163, 184, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset;
 }
 
-html.light-mode .cursor-star {
-  background: #3b82f6;
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+html.light-mode .cursor-ring[data-hovered="true"] {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 14px 32px rgba(148, 163, 184, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.72) inset;
+}
+
+html.light-mode .cursor-ring[data-intent="type"][data-hovered="true"] {
+  border-color: rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 10px 20px rgba(148, 163, 184, 0.12),
+    0 0 0 1px rgba(255,255,255,0.55) inset;
+}
+
+html.light-mode .cursor-label {
+  color: rgb(15 23 42);
+}
+
+html.light-mode .cursor-type-stem,
+html.light-mode .cursor-type-cap {
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.04),
+    0 0 8px rgba(59, 130, 246, 0.06);
 }
 
 /* Scroll progress */
@@ -1167,5 +1291,57 @@ html.light-mode .cursor-star {
 
 html.light-mode .hero-contact-rgb {
   background: linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.82)) padding-box !important;
+  color: rgb(15 23 42) !important;
+}
+
+.leave-page-dialog {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.leave-page-dialog-kicker {
+  color: rgb(113 113 122);
+}
+
+.leave-page-dialog-description {
+  color: rgb(212 212 216);
+}
+
+.leave-page-dialog-emphasis {
+  color: rgb(255 255 255);
+}
+
+html.light-mode .leave-page-dialog {
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.94) 100%) !important;
+  color: rgb(15 23 42) !important;
+  box-shadow:
+    0 26px 60px rgba(148, 163, 184, 0.28),
+    0 0 0 1px rgba(255,255,255,0.85) inset !important;
+}
+
+html.light-mode .leave-page-dialog-kicker {
+  color: rgb(100 116 139) !important;
+}
+
+html.light-mode .leave-page-dialog-title {
+  color: rgb(15 23 42) !important;
+}
+
+html.light-mode .leave-page-dialog-description {
+  color: rgb(71 85 105) !important;
+}
+
+html.light-mode .leave-page-dialog-emphasis {
+  color: rgb(15 23 42) !important;
+}
+
+html.light-mode .leave-page-dialog-cancel {
+  border-color: rgba(148, 163, 184, 0.45) !important;
+  background: rgba(255,255,255,0.92) !important;
+  color: rgb(51 65 85) !important;
+}
+
+html.light-mode .leave-page-dialog-cancel:hover {
+  background: rgb(241 245 249) !important;
   color: rgb(15 23 42) !important;
 }

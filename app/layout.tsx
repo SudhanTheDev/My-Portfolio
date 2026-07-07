@@ -4,6 +4,7 @@ import { Navbar } from '@/components/navbar';
 import { InteractiveBackground } from '@/components/interactive-background';
 import { CustomCursor } from '@/components/custom-cursor';
 import { ScrollProgress } from '@/components/scroll-progress';
+import { IntroLoader } from '@/components/intro-loader';
 import { ThemeProvider } from './theme-provider';
 
 export const metadata = {
@@ -46,11 +47,14 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-foreground antialiased transition-colors duration-500 relative">
         <ThemeProvider>
+          <IntroLoader />
           <InteractiveBackground />
           <CustomCursor />
           <ScrollProgress />
-          <Navbar />
-          {children}
+          <div id="page-shell" className="relative min-h-screen">
+            <Navbar />
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

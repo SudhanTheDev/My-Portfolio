@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "@/app/theme-provider";
 
 export function ThemeToggle() {
-  const { theme, toggleTheme, mounted } = useTheme();
+  const { theme, toggleTheme, mounted, isTransitioning } = useTheme();
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
@@ -45,17 +45,25 @@ export function ThemeToggle() {
 
       <motion.button
         onClick={toggleTheme}
-        whileHover={{ scale: 1.08, rotate: 15 }}
-        whileTap={{ scale: 0.92, rotate: 0 }}
+        disabled={isTransitioning}
+        whileHover={isTransitioning ? undefined : { scale: 1.08, rotate: 15 }}
+        whileTap={isTransitioning ? undefined : { scale: 0.92, rotate: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
-        className="btn-interactive theme-toggle-spotlight p-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-sm hover:border-violet-400/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-[box-shadow,border-color] duration-300 flex items-center justify-center"
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        className="btn-interactive theme-toggle-spotlight flex items-center justify-center rounded-full border border-white/15 bg-white/5 p-2 backdrop-blur-sm transition-[box-shadow,border-color,opacity,transform] duration-300 hover:border-violet-400/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:cursor-wait disabled:opacity-90"
+        aria-label={isTransitioning ? "Switching theme" : `Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       >
         <motion.span
-          key={theme}
-          initial={{ rotate: -90, opacity: 0 }}
-          animate={{ rotate: 0, opacity: 1 }}
-          transition={{ duration: 0.25 }}
+          key={`${theme}-${isTransitioning ? "transitioning" : "idle"}`}
+          initial={{ rotate: -90, opacity: 0, scale: 0.82 }}
+          animate={
+            isTransitioning
+              ? { rotate: 180, opacity: 1, scale: [1, 1.12, 1] }
+              : { rotate: 0, opacity: 1, scale: 1 }
+          }
+          transition={{
+            duration: isTransitioning ? 0.75 : 0.25,
+            ease: isTransitioning ? [0.22, 1, 0.36, 1] : "easeOut",
+          }}
         >
           {theme === "dark" ? (
             <Sun className="w-4 h-4 text-amber-400" />

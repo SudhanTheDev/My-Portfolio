@@ -5,12 +5,22 @@ import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowUpRight, CheckCircle, Github, Linkedin, Instagram, Mail } from "lucide-react";
 import { InteractiveButton } from "@/components/interactive-button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const socialLinks = [
-  { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com", icon: Mail },
-  { name: "GitHub", href: "https://github.com/Sujan-Nepal", icon: Github },
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/", icon: Linkedin },
-  { name: "Instagram", href: "https://www.instagram.com/suzzy.3x3", icon: Instagram },
+  { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com", icon: Mail, destination: "email draft" },
+  { name: "GitHub", href: "https://github.com/Sujan-Nepal", icon: Github, destination: "GitHub profile" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/", icon: Linkedin, destination: "LinkedIn profile" },
+  { name: "Instagram", href: "https://www.instagram.com/suzzy.3x3", icon: Instagram, destination: "Instagram profile" },
 ];
 
 export function ContactSection() {
@@ -26,6 +36,24 @@ export function ContactSection() {
     message: "",
   });
   const [botField, setBotField] = useState("");
+  const [pendingLink, setPendingLink] = useState<(typeof socialLinks)[number] | null>(null);
+
+  const triggerPageShake = () => {
+    if (typeof document === "undefined") return;
+
+    const page = document.getElementById("page-shell");
+    if (!page) return;
+
+    page.classList.remove("page-shake");
+
+    // Force a reflow so rapid repeated clicks restart the animation cleanly.
+    void page.offsetWidth;
+
+    page.classList.add("page-shake");
+    window.setTimeout(() => {
+      page.classList.remove("page-shake");
+    }, 900);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,6 +106,26 @@ export function ContactSection() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleSocialClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    link: (typeof socialLinks)[number]
+  ) => {
+    event.preventDefault();
+    setPendingLink(link);
+  };
+
+  const handleProceedToLink = () => {
+    if (!pendingLink || typeof window === "undefined") return;
+
+    if (pendingLink.href.startsWith("mailto:")) {
+      window.location.href = pendingLink.href;
+    } else {
+      window.open(pendingLink.href, "_blank", "noopener,noreferrer");
+    }
+
+    setPendingLink(null);
   };
 
   return (
@@ -171,6 +219,7 @@ export function ContactSection() {
                 variant="primary"
                 disabled={submitted || submitting}
                 className="px-8 py-4"
+                onClick={triggerPageShake}
               >
                 {submitting ? (
                   "Sending..."
@@ -235,6 +284,7 @@ export function ContactSection() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(event) => handleSocialClick(event, link)}
                     className="group flex items-center gap-2 px-4 py-3 rounded-xl glass-card hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
                   >
                     <link.icon className="w-5 h-5 text-zinc-400 group-hover:text-purple-400 transition-colors duration-300" />
@@ -262,6 +312,36 @@ export function ContactSection() {
           </motion.div>
         </div>
       </div>
+
+      <AlertDialog open={pendingLink !== null} onOpenChange={(open) => !open && setPendingLink(null)}>
+        <AlertDialogContent className="leave-page-dialog max-w-md border-white/10 bg-[#120a1f]/96 text-white shadow-[0_20px_80px_rgba(3,0,20,0.5)] backdrop-blur-2xl">
+          <AlertDialogHeader className="space-y-3 text-left">
+            <span className="leave-page-dialog-kicker text-xs font-mono uppercase tracking-[0.28em] text-zinc-500">
+              Leave Page
+            </span>
+            <AlertDialogTitle className="leave-page-dialog-title text-2xl font-semibold text-white">
+              Are you sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="leave-page-dialog-description text-sm leading-relaxed text-zinc-300">
+              You&apos;re about to leave this page and open the{" "}
+              <span className="leave-page-dialog-emphasis font-semibold text-white">{pendingLink?.destination}</span>
+              .
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="mt-2 flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:space-x-0">
+            <AlertDialogCancel className="leave-page-dialog-cancel mt-0 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              Dismiss
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleProceedToLink}
+              className="bg-gradient-to-r from-blue-500 via-violet-500 to-fuchsia-500 text-white shadow-[0_0_28px_rgba(99,102,241,0.32)] hover:opacity-95"
+            >
+              Proceed
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }

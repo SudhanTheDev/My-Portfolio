@@ -129,6 +129,7 @@ export function InteractiveButton({
         target={target}
         rel={rel}
         onPointerDown={burst}
+        data-cursor={showArrow ? "Open" : undefined}
         className={cn(classes, "group")}
         {...motionProps}
       >
@@ -144,6 +145,7 @@ export function InteractiveButton({
       onPointerDown={burst}
       disabled={disabled}
       data-active={active}
+      data-cursor={variant === "icon" ? "Tap" : undefined}
       aria-label={ariaLabel}
       className={cn(classes, "group")}
       {...motionProps}

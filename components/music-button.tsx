@@ -1,130 +1,113 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Music2, Pause, Play, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-declare global {
-  interface Window {
-    YT?: {
-      PlayerState?: {
-        ENDED: number;
-        PLAYING: number;
-        PAUSED: number;
-      };
-      Player: new (
-        element: HTMLElement,
-        options: {
-          videoId: string;
-          playerVars?: Record<string, number | string>;
-          events?: {
-            onReady?: (event: { target: YTPlayer }) => void;
-            onStateChange?: (event: { data: number; target: YTPlayer }) => void;
-          };
-        }
-      ) => YTPlayer;
-    };
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-interface YTPlayer {
-  playVideo: () => void;
-  pauseVideo: () => void;
-  setVolume: (volume: number) => void;
-  mute: () => void;
-  unMute: () => void;
-  destroy: () => void;
-}
-
-const VIDEO_ID = "8GW6sLrK40k";
+const AUDIO_SOURCE =
+  process.env.NEXT_PUBLIC_BACKGROUND_AUDIO_URL || "/music/background.mp3";
+const INITIAL_VOLUME = 55;
 
 export function MusicButton() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const playerHostRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<YTPlayer | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedAudioRef = useRef(false);
 
   const [expanded, setExpanded] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [ready, setReady] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [volume, setVolume] = useState(55);
+  const [volume, setVolume] = useState(INITIAL_VOLUME);
+  const [hasSource, setHasSource] = useState(false);
 
   const isOpen = expanded || pinned;
-  useEffect(() => {
-    const mountPlayer = () => {
-      if (!window.YT?.Player || !playerHostRef.current || playerRef.current) return;
 
-      playerRef.current = new window.YT.Player(playerHostRef.current, {
-        videoId: VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          modestbranding: 1,
-          rel: 0,
-          loop: 1,
-          playlist: VIDEO_ID,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (event) => {
-            event.target.setVolume(volume);
-            event.target.mute();
-            event.target.playVideo();
-            setReady(true);
-            setPlaying(true);
-          },
-          onStateChange: (event) => {
-            const playerState = window.YT?.PlayerState;
-            if (!playerState) return;
-            setPlaying(event.data === playerState.PLAYING);
-            if (event.data === playerState.ENDED) {
-              event.target.playVideo();
-            }
-          },
-        },
+  useEffect(() => {
+    const audio = new Audio();
+    audioRef.current = audio;
+    audio.preload = "metadata";
+    audio.loop = true;
+    audio.volume = INITIAL_VOLUME / 100;
+    audio.muted = true;
+
+    const source = AUDIO_SOURCE.trim();
+    setHasSource(Boolean(source));
+
+    if (!source) {
+      return () => {
+        audio.pause();
+        audioRef.current = null;
+      };
+    }
+
+    audio.src = source;
+
+    const onCanPlay = () => setReady(true);
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onEnded = () => {
+      audio.currentTime = 0;
+      void audio.play().catch(() => {
+        setPlaying(false);
       });
     };
 
-    if (window.YT?.Player) {
-      mountPlayer();
-    } else {
-      const previous = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        previous?.();
-        mountPlayer();
-      };
+    audio.addEventListener("canplay", onCanPlay);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("ended", onEnded);
 
-      const existing = document.querySelector('script[data-yt-api="true"]');
-      if (!existing) {
-        const script = document.createElement("script");
-        script.src = "https://www.youtube.com/iframe_api";
-        script.async = true;
-        script.dataset.ytApi = "true";
-        document.body.appendChild(script);
-      }
-    }
+    void audio.play().catch(() => {
+      setPlaying(false);
+    });
 
     return () => {
-      playerRef.current?.destroy();
-      playerRef.current = null;
+      audio.pause();
+      audio.removeEventListener("canplay", onCanPlay);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("ended", onEnded);
+      audioRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-    if (!playerRef.current || !ready) return;
-    playerRef.current.setVolume(volume);
-  }, [ready, volume]);
+    if (!audioRef.current) return;
+    audioRef.current.volume = volume / 100;
+  }, [volume]);
 
   useEffect(() => {
-    if (!ready || unlockedAudioRef.current) return;
+    if (!("mediaSession" in navigator)) return;
+
+    navigator.mediaSession.metadata = null;
+    navigator.mediaSession.playbackState = playing ? "playing" : "paused";
+    navigator.mediaSession.setActionHandler("play", () => {
+      void audioRef.current?.play();
+    });
+    navigator.mediaSession.setActionHandler("pause", () => {
+      audioRef.current?.pause();
+    });
+
+    return () => {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+    };
+  }, [playing]);
+
+  useEffect(() => {
+    if (!ready || unlockedAudioRef.current || !audioRef.current) return;
 
     const unlockAudio = () => {
-      if (!playerRef.current || unlockedAudioRef.current) return;
+      const audio = audioRef.current;
+      if (!audio || unlockedAudioRef.current) return;
+
       unlockedAudioRef.current = true;
-      playerRef.current.unMute();
-      playerRef.current.setVolume(volume);
+      audio.muted = false;
+      audio.volume = volume / 100;
+      void audio.play().catch(() => {
+        setPlaying(false);
+      });
     };
 
     window.addEventListener("pointerdown", unlockAudio, { once: true });
@@ -150,12 +133,23 @@ export function MusicButton() {
     return () => window.removeEventListener("mousedown", onPointerDown);
   }, []);
 
-  const togglePlayback = () => {
-    if (!playerRef.current || !ready) return;
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio || !ready || !hasSource) return;
+
     unlockedAudioRef.current = true;
-    playerRef.current.unMute();
-    if (playing) playerRef.current.pauseVideo();
-    else playerRef.current.playVideo();
+    audio.muted = false;
+
+    if (playing) {
+      audio.pause();
+      return;
+    }
+
+    try {
+      await audio.play();
+    } catch {
+      setPlaying(false);
+    }
   };
 
   return (
@@ -167,8 +161,6 @@ export function MusicButton() {
         if (!pinned) setExpanded(false);
       }}
     >
-      <div ref={playerHostRef} className="absolute h-px w-px overflow-hidden opacity-0 pointer-events-none" />
-
       <motion.div
         animate={{
           width: isOpen ? 164 : 42,
@@ -205,8 +197,10 @@ export function MusicButton() {
               <div className="flex shrink-0 items-center gap-2">
                 <button
                   type="button"
-                  onClick={togglePlayback}
-                  disabled={!ready}
+                  onClick={() => {
+                    void togglePlayback();
+                  }}
+                  disabled={!ready || !hasSource}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/8 text-white/85 transition-colors duration-300 hover:bg-white/12 disabled:opacity-50"
                   aria-label={playing ? "Pause music" : "Play music"}
                 >
@@ -223,6 +217,7 @@ export function MusicButton() {
                     onChange={(event) => setVolume(Number(event.target.value))}
                     className="music-volume w-12 accent-cyan-400"
                     aria-label="Music volume"
+                    disabled={!hasSource}
                   />
                 </div>
               </div>
