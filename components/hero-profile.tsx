@@ -16,6 +16,7 @@ const PROFILE_IMAGES = [
 export function HeroProfile() {
   const [crownHovered, setCrownHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [isInteractive, setIsInteractive] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -27,7 +28,11 @@ export function HeroProfile() {
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!isFinePointer) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const allowInteractiveMotion = isFinePointer && !prefersReducedMotion && window.innerWidth >= 1024;
+
+    setIsInteractive(allowInteractiveMotion);
+    if (!allowInteractiveMotion) return;
 
     const onMove = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth - 0.5);
@@ -39,12 +44,14 @@ export function HeroProfile() {
   }, [mouseX, mouseY]);
 
   useEffect(() => {
+    if (!isInteractive) return;
+
     const intervalId = window.setInterval(() => {
       setActiveImage((current) => (current + 1) % PROFILE_IMAGES.length);
     }, 7000);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [isInteractive]);
 
   return (
     <motion.div
@@ -55,17 +62,22 @@ export function HeroProfile() {
       className="relative w-full max-w-[390px] mx-auto lg:mx-0"
       style={{ perspective: 1200 }}
     >
-      <motion.div
-        className="absolute -inset-6 rounded-[2.5rem] opacity-80"
-        style={{
-          x: glowX,
-          y: glowY,
-          background: "radial-gradient(circle, rgba(99,102,241,0.4) 0%, rgba(168,85,247,0.2) 40%, transparent 70%)",
-          filter: "blur(24px)",
-        }}
-      />
+      {isInteractive ? (
+        <motion.div
+          className="absolute -inset-6 rounded-[2.5rem] opacity-80"
+          style={{
+            x: glowX,
+            y: glowY,
+            background: "radial-gradient(circle, rgba(99,102,241,0.4) 0%, rgba(168,85,247,0.2) 40%, transparent 70%)",
+            filter: "blur(24px)",
+          }}
+        />
+      ) : null}
 
-      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative overflow-visible">
+      <motion.div
+        style={isInteractive ? { rotateX, rotateY, transformStyle: "preserve-3d" } : undefined}
+        className="relative overflow-visible"
+      >
         <div
           onMouseEnter={() => setCrownHovered(true)}
           onMouseLeave={() => setCrownHovered(false)}
@@ -74,8 +86,8 @@ export function HeroProfile() {
           className="absolute left-1/2 top-0 z-[80] -translate-x-1/2 -translate-y-1/2"
         >
         <motion.div
-          animate={{ y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] }}
-          transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
+          animate={isInteractive ? { y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] } : undefined}
+          transition={isInteractive ? { duration: 4.8, repeat: Infinity, ease: "easeInOut" } : undefined}
           whileHover={{ scale: 1.08, y: -8 }}
           className="group relative profile-crown-wrap"
         >
@@ -125,19 +137,21 @@ export function HeroProfile() {
             <motion.div
               key={`profile-sweep-${activeImage}`}
               initial={{ opacity: 0, x: "-120%" }}
-              animate={{ opacity: [0, 0.3, 0], x: ["-120%", "5%", "120%"] }}
-              transition={{ duration: 1.15, ease: "easeInOut" }}
+              animate={isInteractive ? { opacity: [0, 0.3, 0], x: ["-120%", "5%", "120%"] } : { opacity: 0.18, x: "0%" }}
+              transition={isInteractive ? { duration: 1.15, ease: "easeInOut" } : { duration: 0.2 }}
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent mix-blend-screen"
             />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-[1.85rem]" />
           </div>
         </div>
 
-        <motion.div
-          animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.02, 1] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -inset-2 rounded-[2.1rem] border border-violet-400/30 pointer-events-none"
-        />
+        {isInteractive ? (
+          <motion.div
+            animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.02, 1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -inset-2 rounded-[2.1rem] border border-violet-400/30 pointer-events-none"
+          />
+        ) : null}
       </motion.div>
 
       <motion.div

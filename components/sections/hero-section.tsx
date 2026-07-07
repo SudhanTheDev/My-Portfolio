@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { HeroProfile } from "@/components/hero-profile";
 import { GlowButton } from "@/components/glow-button";
 
-const repeatViewport = { once: false, amount: 0.35 } as const;
+const repeatViewport = { once: true, amount: 0.35 } as const;
 
 export function HeroSection() {
   return (

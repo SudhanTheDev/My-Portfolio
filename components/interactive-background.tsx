@@ -42,6 +42,8 @@ interface RenderedParticle {
   glow: number;
 }
 
+type EffectsMode = "full" | "balanced" | "light";
+
 export function InteractiveBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollProgressRef = useRef(0);
@@ -49,6 +51,7 @@ export function InteractiveBackground() {
   const scrollEnergyRef = useRef(0);
   const mouseRef = useRef({ x: -320, y: -320, active: false });
   const [lightMode, setLightMode] = useState(false);
+  const [effectsMode, setEffectsMode] = useState<EffectsMode>("full");
 
   useEffect(() => {
     const root = document.documentElement;
@@ -63,6 +66,36 @@ export function InteractiveBackground() {
   }, []);
 
   useEffect(() => {
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+
+    const syncEffectsMode = () => {
+      if (reducedMotionQuery.matches) {
+        setEffectsMode("light");
+        return;
+      }
+
+      const lowPowerDevice =
+        coarsePointerQuery.matches ||
+        window.innerWidth < 900 ||
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
+      setEffectsMode(lowPowerDevice ? "balanced" : "full");
+    };
+
+    syncEffectsMode();
+    window.addEventListener("resize", syncEffectsMode);
+    reducedMotionQuery.addEventListener("change", syncEffectsMode);
+    coarsePointerQuery.addEventListener("change", syncEffectsMode);
+
+    return () => {
+      window.removeEventListener("resize", syncEffectsMode);
+      reducedMotionQuery.removeEventListener("change", syncEffectsMode);
+      coarsePointerQuery.removeEventListener("change", syncEffectsMode);
+    };
+  }, []);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -74,8 +107,13 @@ export function InteractiveBackground() {
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let animationId = 0;
     let lastScrollY = window.scrollY;
+    let isDocumentVisible = !document.hidden;
     let particles: DustParticle[] = [];
     let glyphs: FloatingGlyph[] = [];
+
+    const isLightEffects = effectsMode === "light";
+    const isBalancedEffects = effectsMode === "balanced";
+    const supportsMouseEffects = effectsMode === "full";
 
     const glyphColors = [
       "rgba(96, 165, 250, 0.24)",
@@ -95,7 +133,10 @@ export function InteractiveBackground() {
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, lightMode ? 1.2 : 2);
+      dpr = Math.min(
+        window.devicePixelRatio || 1,
+        isLightEffects ? 1 : lightMode || isBalancedEffects ? 1.25 : 1.6
+      );
 
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -103,45 +144,46 @@ export function InteractiveBackground() {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const particleCount = lightMode
-        ? Math.min(135, Math.floor((width * height) / 14000))
-        : Math.min(240, Math.floor((width * height) / 9000));
-      const glyphCount = lightMode
-        ? Math.min(14, Math.floor((width * height) / 90000))
-        : Math.min(28, Math.floor((width * height) / 56000));
+      const particleCount = isLightEffects
+        ? Math.min(60, Math.floor((width * height) / 26000))
+        : lightMode || isBalancedEffects
+          ? Math.min(110, Math.floor((width * height) / 16000))
+          : Math.min(170, Math.floor((width * height) / 11000));
+      const glyphCount = isLightEffects
+        ? 0
+        : lightMode || isBalancedEffects
+          ? Math.min(8, Math.floor((width * height) / 120000))
+          : Math.min(18, Math.floor((width * height) / 70000));
 
       particles = Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 2.2 + 0.5,
-        alpha: Math.random() * 0.4 + 0.18,
+        size: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.36 + 0.18,
         twinkle: Math.random() * 0.9 + 0.3,
-        drift: Math.random() * 26 + 8,
+        drift: Math.random() * 22 + 8,
         phase: Math.random() * Math.PI * 2,
-        depth: Math.random() * 1.6 + 0.4,
-        orbitX: Math.random() * 34 + 8,
-        orbitY: Math.random() * 28 + 6,
-        orbitSpeed: Math.random() * 0.0018 + 0.0005,
+        depth: Math.random() * 1.4 + 0.4,
+        orbitX: Math.random() * 30 + 8,
+        orbitY: Math.random() * 24 + 6,
+        orbitSpeed: Math.random() * 0.0016 + 0.0005,
         color: particleColors[Math.floor(Math.random() * particleColors.length)],
-        kind: Math.random() > 0.8 ? "star" : "dot",
+        kind: Math.random() > 0.82 ? "star" : "dot",
       }));
 
       glyphs = Array.from({ length: glyphCount }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 48 + 18,
+        size: Math.random() * 40 + 18,
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.008,
-        driftX: Math.random() * 90 + 24,
-        driftY: Math.random() * 70 + 20,
+        rotationSpeed: (Math.random() - 0.5) * 0.007,
+        driftX: Math.random() * 75 + 18,
+        driftY: Math.random() * 60 + 16,
         phase: Math.random() * Math.PI * 2,
-        alpha: Math.random() * 0.16 + 0.08,
-        kind: ["diamond", "triangle", "ring", "star", "cross"][Math.floor(Math.random() * 5)] as
-          | "diamond"
-          | "triangle"
-          | "ring"
-          | "star"
-          | "cross",
+        alpha: Math.random() * 0.12 + 0.06,
+        kind: ["diamond", "triangle", "ring", "star", "cross"][
+          Math.floor(Math.random() * 5)
+        ] as FloatingGlyph["kind"],
         color: glyphColors[Math.floor(Math.random() * glyphColors.length)],
       }));
     };
@@ -168,14 +210,24 @@ export function InteractiveBackground() {
       mouseRef.current = { x: -320, y: -320, active: false };
     };
 
+    const onVisibilityChange = () => {
+      isDocumentVisible = !document.hidden;
+      if (!isDocumentVisible) {
+        mouseRef.current = { x: -320, y: -320, active: false };
+      }
+    };
+
     const drawGlyph = (glyph: FloatingGlyph, time: number, scrollProgress: number) => {
       const driftX = Math.sin(time * 0.00038 + glyph.phase) * glyph.driftX;
       const driftY =
         Math.cos(time * 0.00029 + glyph.phase) * glyph.driftY -
-        scrollDirectionRef.current * scrollEnergyRef.current * 36;
+        scrollDirectionRef.current * scrollEnergyRef.current * 24;
       const x = glyph.x + driftX;
-      const y = ((glyph.y + driftY - scrollProgress * 120) % (height + 120) + (height + 120)) % (height + 120) - 60;
-      const size = glyph.size * (1 + Math.sin(time * 0.0014 + glyph.phase) * 0.08);
+      const y =
+        ((glyph.y + driftY - scrollProgress * 100) % (height + 120) + (height + 120)) %
+          (height + 120) -
+        60;
+      const size = glyph.size * (1 + Math.sin(time * 0.0014 + glyph.phase) * 0.06);
 
       ctx.save();
       ctx.translate(x, y);
@@ -183,9 +235,9 @@ export function InteractiveBackground() {
       ctx.globalAlpha = glyph.alpha;
       ctx.strokeStyle = glyph.color;
       ctx.fillStyle = glyph.color;
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1.1;
       ctx.shadowColor = glyph.color;
-      ctx.shadowBlur = 24;
+      ctx.shadowBlur = isBalancedEffects ? 16 : 22;
 
       if (glyph.kind === "diamond") {
         ctx.beginPath();
@@ -241,7 +293,7 @@ export function InteractiveBackground() {
       ctx.globalAlpha = alpha;
       ctx.fillStyle = `rgba(${color}, ${alpha})`;
       ctx.shadowColor = `rgba(${color}, 0.7)`;
-      ctx.shadowBlur = 14;
+      ctx.shadowBlur = isBalancedEffects ? 10 : 14;
       ctx.beginPath();
       for (let i = 0; i < 5; i += 1) {
         const outerAngle = (i * Math.PI * 2) / 5 - Math.PI / 2;
@@ -272,9 +324,9 @@ export function InteractiveBackground() {
         const orbitY =
           Math.cos(time * particle.orbitSpeed * 1.35 + particle.phase) *
           (particle.drift + particle.orbitY);
-        const scrollShift = scrollDirectionRef.current * scrollEnergyRef.current * particle.depth * 18;
+        const scrollShift = scrollDirectionRef.current * scrollEnergyRef.current * particle.depth * 16;
         let x = particle.x + orbitX;
-        let y = particle.y + orbitY - scrollProgress * particle.depth * 34 - scrollShift;
+        let y = particle.y + orbitY - scrollProgress * particle.depth * 28 - scrollShift;
 
         if (y < -24) y += height + 48;
         if (y > height + 24) y -= height + 48;
@@ -283,18 +335,17 @@ export function InteractiveBackground() {
         let pullY = 0;
         let lineAlpha = 0;
 
-        if (active) {
+        if (active && supportsMouseEffects) {
           const dx = mouseX - x;
           const dy = mouseY - y;
           const distance = Math.hypot(dx, dy);
-
-          const mouseInfluenceRadius = lightMode ? 170 : 240;
+          const mouseInfluenceRadius = lightMode ? 150 : 220;
 
           if (distance < mouseInfluenceRadius) {
             const influence = 1 - distance / mouseInfluenceRadius;
-            pullX = dx * influence * (lightMode ? 0.12 : 0.2);
-            pullY = dy * influence * (lightMode ? 0.12 : 0.2);
-            lineAlpha = influence * 0.3;
+            pullX = dx * influence * 0.18;
+            pullY = dy * influence * 0.18;
+            lineAlpha = influence * 0.24;
           }
         }
 
@@ -303,15 +354,15 @@ export function InteractiveBackground() {
 
         const alpha =
           particle.alpha +
-          Math.sin(time * 0.0018 * particle.twinkle + particle.phase) * 0.16 +
-          lineAlpha * 0.8;
-        const glow = lightMode ? 1.4 + particle.depth * 0.22 : 1;
+          Math.sin(time * 0.0018 * particle.twinkle + particle.phase) * 0.14 +
+          lineAlpha * 0.7;
+        const glow = lightMode || isBalancedEffects ? 1.15 : 1;
 
         rendered.push({
           x,
           y,
           size: particle.size,
-          alpha: Math.max(0.1, alpha),
+          alpha: Math.max(0.08, alpha),
           color: particle.color,
           kind: particle.kind,
           glow,
@@ -322,13 +373,15 @@ export function InteractiveBackground() {
     };
 
     const drawParticleWeb = (rendered: RenderedParticle[]) => {
+      if (isLightEffects) return;
+
       const { x: mouseX, y: mouseY, active } = mouseRef.current;
 
       ctx.save();
       ctx.lineWidth = 0.6;
-      const neighborWindow = lightMode ? 5 : 10;
-      const connectionDistance = lightMode ? 72 : 95;
-      const mouseConnectionDistance = lightMode ? 140 : 200;
+      const neighborWindow = lightMode || isBalancedEffects ? 4 : 8;
+      const connectionDistance = lightMode || isBalancedEffects ? 62 : 88;
+      const mouseConnectionDistance = supportsMouseEffects ? 180 : 0;
 
       for (let i = 0; i < rendered.length; i += 1) {
         const source = rendered[i];
@@ -340,7 +393,7 @@ export function InteractiveBackground() {
           const distance = Math.hypot(dx, dy);
 
           if (distance < connectionDistance) {
-            const alpha = (1 - distance / connectionDistance) * (lightMode ? 0.16 : 0.24);
+            const alpha = (1 - distance / connectionDistance) * (lightMode ? 0.12 : 0.2);
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -349,10 +402,10 @@ export function InteractiveBackground() {
           }
         }
 
-        if (active) {
+        if (active && mouseConnectionDistance > 0) {
           const mouseDistance = Math.hypot(mouseX - source.x, mouseY - source.y);
           if (mouseDistance < mouseConnectionDistance) {
-            const alpha = (1 - mouseDistance / mouseConnectionDistance) * (lightMode ? 0.24 : 0.45);
+            const alpha = (1 - mouseDistance / mouseConnectionDistance) * 0.32;
             ctx.strokeStyle = `rgba(${source.color}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
@@ -368,20 +421,22 @@ export function InteractiveBackground() {
     const drawParticles = (rendered: RenderedParticle[]) => {
       for (const particle of rendered) {
         if (particle.kind === "star") {
-          drawStar(particle.x, particle.y, particle.size * 1.8, particle.color, particle.alpha);
+          drawStar(particle.x, particle.y, particle.size * 1.6, particle.color, particle.alpha);
           continue;
         }
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${particle.color}, ${particle.alpha})`;
-        ctx.shadowColor = `rgba(${particle.color}, ${lightMode ? 0.82 : 0.6})`;
-        ctx.shadowBlur = 12 * particle.glow;
+        ctx.shadowColor = `rgba(${particle.color}, ${lightMode ? 0.76 : 0.56})`;
+        ctx.shadowBlur = 10 * particle.glow;
         ctx.fill();
       }
     };
 
     const drawMouseBloom = (time: number) => {
+      if (!supportsMouseEffects) return;
+
       const { x: mouseX, y: mouseY, active } = mouseRef.current;
       if (!active) return;
 
@@ -389,55 +444,42 @@ export function InteractiveBackground() {
 
       ctx.save();
 
-      const core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, lightMode ? 52 : 72);
+      const core = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, lightMode ? 48 : 64);
       core.addColorStop(0, "rgba(255,255,255,0.9)");
       core.addColorStop(0.18, "rgba(147,197,253,0.45)");
       core.addColorStop(0.42, "rgba(168,85,247,0.2)");
       core.addColorStop(1, "rgba(168,85,247,0)");
       ctx.fillStyle = core;
-      ctx.globalAlpha = lightMode ? pulse * 0.65 : pulse;
+      ctx.globalAlpha = lightMode ? pulse * 0.55 : pulse * 0.85;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, lightMode ? 52 : 72, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, lightMode ? 48 : 64, 0, Math.PI * 2);
       ctx.fill();
 
-      if (!lightMode) {
-        ctx.lineWidth = 1;
-        for (let i = 0; i < 10; i += 1) {
-          const angle = time * 0.0014 + (i * Math.PI * 2) / 10;
-          const inner = 18;
-          const outer = 46 + Math.sin(time * 0.003 + i) * 7;
-          const alpha = 0.16 + Math.sin(time * 0.004 + i) * 0.05;
-          ctx.strokeStyle = `rgba(191, 219, 254, ${alpha})`;
-          ctx.beginPath();
-          ctx.moveTo(mouseX + Math.cos(angle) * inner, mouseY + Math.sin(angle) * inner);
-          ctx.lineTo(mouseX + Math.cos(angle) * outer, mouseY + Math.sin(angle) * outer);
-          ctx.stroke();
-        }
-      }
-
-      ctx.strokeStyle = "rgba(191, 219, 254, 0.22)";
-      ctx.shadowColor = "rgba(125, 211, 252, 0.5)";
-      ctx.shadowBlur = lightMode ? 10 : 18;
+      ctx.strokeStyle = "rgba(191, 219, 254, 0.2)";
+      ctx.shadowColor = "rgba(125, 211, 252, 0.4)";
+      ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, (lightMode ? 20 : 28) + Math.sin(time * 0.006) * 4, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, 24 + Math.sin(time * 0.006) * 3, 0, Math.PI * 2);
       ctx.stroke();
-      if (!lightMode) {
-        ctx.beginPath();
-        ctx.arc(mouseX, mouseY, 48 + Math.cos(time * 0.004) * 5, 0, Math.PI * 2);
-        ctx.stroke();
-      }
 
       ctx.restore();
     };
 
     const draw = (time: number) => {
+      if (!isDocumentVisible) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       const scrollProgress = scrollProgressRef.current;
       scrollEnergyRef.current *= 0.95;
       const renderedParticles = renderParticles(time, scrollProgress);
 
-      glyphs.forEach((glyph) => drawGlyph(glyph, time, scrollProgress));
+      if (glyphs.length > 0) {
+        glyphs.forEach((glyph) => drawGlyph(glyph, time, scrollProgress));
+      }
       drawParticleWeb(renderedParticles);
       drawMouseBloom(time);
       drawParticles(renderedParticles);
@@ -451,17 +493,23 @@ export function InteractiveBackground() {
 
     window.addEventListener("resize", resize);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("mouseleave", onMouseLeave);
+    if (supportsMouseEffects) {
+      window.addEventListener("mousemove", onMouseMove, { passive: true });
+      window.addEventListener("mouseleave", onMouseLeave);
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseleave", onMouseLeave);
+      if (supportsMouseEffects) {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseleave", onMouseLeave);
+      }
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [lightMode]);
+  }, [effectsMode, lightMode]);
 
   return (
     <div
@@ -473,7 +521,9 @@ export function InteractiveBackground() {
       <div className="absolute inset-0 bg-mesh-base" />
 
       {lightMode ? <div className="absolute inset-0 light-theme-wash" /> : null}
-      {lightMode ? <div className="absolute inset-0 light-theme-colorwave" /> : null}
+      {lightMode && effectsMode !== "light" ? (
+        <div className="absolute inset-0 light-theme-colorwave" />
+      ) : null}
 
       <div
         className="absolute inset-0"
@@ -484,25 +534,26 @@ export function InteractiveBackground() {
         }}
       />
 
-      <div
-        className="absolute inset-0 mix-blend-screen"
-        style={{
-          opacity: lightMode ? 0.82 : 0.8,
-          background: `
-            radial-gradient(${lightMode ? "220px" : "260px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.18)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.08)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
-            radial-gradient(${lightMode ? "380px" : "520px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.05)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
-          `,
-        }}
-      />
+      {effectsMode !== "light" ? (
+        <div
+          className="absolute inset-0 mix-blend-screen"
+          style={{
+            opacity: lightMode ? 0.82 : 0.8,
+            background: `
+              radial-gradient(${lightMode ? "220px" : "260px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.18)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.08)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
+              radial-gradient(${lightMode ? "380px" : "520px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.05)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
+            `,
+          }}
+        />
+      ) : null}
 
-      {!lightMode ? (
+      {!lightMode && effectsMode === "full" ? (
         <div
           className="absolute inset-0"
           style={{
             opacity: 0.6,
-            background: `
-              conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.1), rgba(168,85,247,0.06), rgba(45,212,191,0.08), rgba(59,130,246,0.1))
-            `,
+            background:
+              "conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.1), rgba(168,85,247,0.06), rgba(45,212,191,0.08), rgba(59,130,246,0.1))",
             maskImage:
               "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
             WebkitMaskImage:

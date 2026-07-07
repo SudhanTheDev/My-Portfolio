@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import type { CSSProperties, ReactNode } from 'react';
 import { HeroSection } from '@/components/sections/hero-section';
 
 const ServicesSection = dynamic(
@@ -50,6 +51,15 @@ function SectionSkeleton() {
   return <div className="h-32 border-t border-border" aria-hidden />;
 }
 
+const deferredSectionStyle = {
+  contentVisibility: 'auto',
+  containIntrinsicSize: '900px',
+} as CSSProperties;
+
+function DeferredSection({ children }: { children: ReactNode }) {
+  return <div style={deferredSectionStyle}>{children}</div>;
+}
+
 export default function Home() {
   return (
     <main className="relative">
@@ -69,17 +79,39 @@ export default function Home() {
       </form>
 
       <HeroSection />
-      <ServicesSection />
-      <ProjectsSection />
-      <AboutSection />
-      <ExperienceSection />
-      <SkillsSection />
-      <StatsSection />
-      <GallerySection />
-      <GamingSection />
-      <PersonalitySection />
-      <ContactSection />
-      <Footer />
+      <DeferredSection>
+        <ServicesSection />
+      </DeferredSection>
+      <DeferredSection>
+        <ProjectsSection />
+      </DeferredSection>
+      <DeferredSection>
+        <AboutSection />
+      </DeferredSection>
+      <DeferredSection>
+        <ExperienceSection />
+      </DeferredSection>
+      <DeferredSection>
+        <SkillsSection />
+      </DeferredSection>
+      <DeferredSection>
+        <StatsSection />
+      </DeferredSection>
+      <DeferredSection>
+        <GallerySection />
+      </DeferredSection>
+      <DeferredSection>
+        <GamingSection />
+      </DeferredSection>
+      <DeferredSection>
+        <PersonalitySection />
+      </DeferredSection>
+      <DeferredSection>
+        <ContactSection />
+      </DeferredSection>
+      <DeferredSection>
+        <Footer />
+      </DeferredSection>
     </main>
   );
 }

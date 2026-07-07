@@ -116,6 +116,8 @@ export function GallerySection() {
                 <img
                   src={image.src}
                   alt={image.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                 />
               </motion.div>
@@ -162,6 +164,7 @@ export function GallerySection() {
             animate={{ scale: 1, opacity: 1 }}
             src={filteredImages[selectedImage]?.src}
             alt={filteredImages[selectedImage]?.title}
+            decoding="async"
             className="max-w-full max-h-[90vh] object-contain"
           />
         </motion.div>

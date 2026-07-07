@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const TRAIL_COUNT = 6;
+const TRAIL_COUNT = 4;
 
 export function CustomCursor() {
   const [enabled, setEnabled] = useState(false);
@@ -20,12 +20,14 @@ export function CustomCursor() {
   );
   const rafId = useRef<number>();
   const isPressed = useRef(false);
+  const isVisibleTab = useRef(true);
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const largeViewport = window.innerWidth >= 1280;
 
-    if (!isFinePointer || prefersReducedMotion) return;
+    if (!isFinePointer || prefersReducedMotion || !largeViewport) return;
 
     setEnabled(true);
     document.documentElement.classList.add("custom-cursor-active");
@@ -56,7 +58,19 @@ export function CustomCursor() {
       setVisible(true);
     };
 
+    const onVisibilityChange = () => {
+      isVisibleTab.current = !document.hidden;
+      if (document.hidden) {
+        setVisible(false);
+      }
+    };
+
     const animate = () => {
+      if (!isVisibleTab.current) {
+        rafId.current = requestAnimationFrame(animate);
+        return;
+      }
+
       dot.current.x += (mouse.current.x - dot.current.x) * 0.32;
       dot.current.y += (mouse.current.y - dot.current.y) * 0.32;
       aura.current.x += (mouse.current.x - aura.current.x) * 0.16;
@@ -104,6 +118,7 @@ export function CustomCursor() {
     window.addEventListener("mouseup", onUp);
     document.addEventListener("mouseleave", onLeave);
     document.addEventListener("mouseenter", onEnter);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       document.documentElement.classList.remove("custom-cursor-active");
@@ -114,6 +129,7 @@ export function CustomCursor() {
       window.removeEventListener("mouseup", onUp);
       document.removeEventListener("mouseleave", onLeave);
       document.removeEventListener("mouseenter", onEnter);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, []);
