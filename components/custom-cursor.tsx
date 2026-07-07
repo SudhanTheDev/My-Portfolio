@@ -40,7 +40,13 @@ function getCursorLabel(target: HTMLElement | null) {
   return { active: true, label: "Open", intent: "open" as CursorIntent };
 }
 
+function getHoverStateFromPoint(x: number, y: number) {
+  const target = document.elementFromPoint(x, y) as HTMLElement | null;
+  return getCursorLabel(target);
+}
+
 export function CustomCursor() {
+  const TARGET_FRAME_MS = 1000 / 60;
   const [enabled, setEnabled] = useState(false);
   const [visible, setVisible] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -52,6 +58,7 @@ export function CustomCursor() {
   const ring = useRef({ x: -200, y: -200 });
   const label = useRef({ x: -200, y: -200 });
   const rafId = useRef<number>();
+  const lastFrameRef = useRef(0);
   const isPressed = useRef(false);
   const isVisibleTab = useRef(true);
   const hoverState = useRef<{ active: boolean; label: string; intent: CursorIntent }>({
@@ -70,9 +77,14 @@ export function CustomCursor() {
     setEnabled(true);
     document.documentElement.classList.add("custom-cursor-active");
 
+    const refreshHoverState = () => {
+      if (mouse.current.x < 0 || mouse.current.y < 0) return;
+      hoverState.current = getHoverStateFromPoint(mouse.current.x, mouse.current.y);
+    };
+
     const onMove = (event: MouseEvent) => {
       mouse.current = { x: event.clientX, y: event.clientY };
-      hoverState.current = getCursorLabel(event.target as HTMLElement | null);
+      hoverState.current = getHoverStateFromPoint(event.clientX, event.clientY);
       setVisible(true);
     };
 
@@ -92,6 +104,11 @@ export function CustomCursor() {
 
     const onEnter = () => {
       setVisible(true);
+      refreshHoverState();
+    };
+
+    const onScroll = () => {
+      refreshHoverState();
     };
 
     const onVisibilityChange = () => {
@@ -106,6 +123,14 @@ export function CustomCursor() {
         rafId.current = requestAnimationFrame(animate);
         return;
       }
+
+      const now = performance.now();
+      if (now - lastFrameRef.current < TARGET_FRAME_MS) {
+        rafId.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrameRef.current = now;
 
       const hovered = hoverState.current.active;
       const isTypeIntent = hoverState.current.intent === "type";
@@ -150,6 +175,7 @@ export function CustomCursor() {
 
     rafId.current = requestAnimationFrame(animate);
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
     document.addEventListener("mouseleave", onLeave);
@@ -159,6 +185,7 @@ export function CustomCursor() {
     return () => {
       document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousedown", onDown);
       window.removeEventListener("mouseup", onUp);
       document.removeEventListener("mouseleave", onLeave);

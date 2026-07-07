@@ -409,6 +409,15 @@
     animation: shimmer-text 6s linear infinite;
   }
 
+  .project-emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+  }
+
   .glass-effect {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(16px);

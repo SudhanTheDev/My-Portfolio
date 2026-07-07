@@ -45,6 +45,7 @@ interface RenderedParticle {
 type EffectsMode = "full" | "balanced" | "light";
 
 export function InteractiveBackground() {
+  const TARGET_FRAME_MS = 1000 / 60;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollProgressRef = useRef(0);
   const scrollDirectionRef = useRef(1);
@@ -106,6 +107,7 @@ export function InteractiveBackground() {
     let height = window.innerHeight;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let animationId = 0;
+    let lastFrameTime = 0;
     let lastScrollY = window.scrollY;
     let isDocumentVisible = !document.hidden;
     let particles: DustParticle[] = [];
@@ -135,7 +137,7 @@ export function InteractiveBackground() {
       height = window.innerHeight;
       dpr = Math.min(
         window.devicePixelRatio || 1,
-        isLightEffects ? 1 : lightMode || isBalancedEffects ? 1.25 : 1.6
+        isLightEffects ? 1 : lightMode || isBalancedEffects ? 1.1 : 1.35
       );
 
       canvas.width = Math.floor(width * dpr);
@@ -145,15 +147,15 @@ export function InteractiveBackground() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const particleCount = isLightEffects
-        ? Math.min(60, Math.floor((width * height) / 26000))
+        ? Math.min(44, Math.floor((width * height) / 32000))
         : lightMode || isBalancedEffects
-          ? Math.min(110, Math.floor((width * height) / 16000))
-          : Math.min(170, Math.floor((width * height) / 11000));
+          ? Math.min(84, Math.floor((width * height) / 22000))
+          : Math.min(132, Math.floor((width * height) / 15000));
       const glyphCount = isLightEffects
         ? 0
         : lightMode || isBalancedEffects
-          ? Math.min(8, Math.floor((width * height) / 120000))
-          : Math.min(18, Math.floor((width * height) / 70000));
+          ? Math.min(6, Math.floor((width * height) / 160000))
+          : Math.min(12, Math.floor((width * height) / 98000));
 
       particles = Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
@@ -379,8 +381,8 @@ export function InteractiveBackground() {
 
       ctx.save();
       ctx.lineWidth = 0.6;
-      const neighborWindow = lightMode || isBalancedEffects ? 4 : 8;
-      const connectionDistance = lightMode || isBalancedEffects ? 62 : 88;
+      const neighborWindow = lightMode || isBalancedEffects ? 3 : 6;
+      const connectionDistance = lightMode || isBalancedEffects ? 54 : 76;
       const mouseConnectionDistance = supportsMouseEffects ? 180 : 0;
 
       for (let i = 0; i < rendered.length; i += 1) {
@@ -470,6 +472,13 @@ export function InteractiveBackground() {
         animationId = requestAnimationFrame(draw);
         return;
       }
+
+      if (time - lastFrameTime < TARGET_FRAME_MS) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+
+      lastFrameTime = time;
 
       ctx.clearRect(0, 0, width, height);
 

@@ -2,7 +2,6 @@
 
 import { BrandLogo } from "@/components/brand-logo";
 import { InteractiveButton } from "@/components/interactive-button";
-import { ArrowUpRight } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -16,37 +15,45 @@ export function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className="relative py-24 border-t border-white/10">
-      <div className="absolute inset-0 bg-gradient-to-t from-violet-950/20 to-transparent pointer-events-none" />
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
-        <div className="glass-card rounded-3xl p-10 md:p-14 mb-12 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            <span className="text-shimmer">Let&apos;s build something epic 🚀</span>
+    <footer className="relative border-t border-white/10 py-24">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-violet-950/20 to-transparent" />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="glass-card mb-12 rounded-3xl p-10 text-center md:p-14">
+          <h2 className="mb-4 text-3xl font-bold font-display md:text-5xl">
+            <span className="text-shimmer">Let&apos;s build something epic</span>
+            <span className="project-emoji ml-3 inline-block align-middle text-foreground">🚀</span>
           </h2>
-          <p className="text-muted mb-8 max-w-md mx-auto">
-            Have a project in mind? Let&apos;s turn your ideas into reality ✨
+          <p className="mx-auto mb-8 max-w-md text-muted">
+            Have a project in mind? Let&apos;s turn your ideas into reality{" "}
+            <span className="project-emoji align-middle text-foreground">✨</span>
           </p>
           <InteractiveButton href="#contact" variant="primary" showArrow className="px-8 py-4">
             Start a Project
           </InteractiveButton>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start gap-12">
+        <div className="flex flex-col items-start justify-between gap-12 md:flex-row">
           <div>
-            <InteractiveButton variant="ghost" onClick={scrollToTop} className="mb-4 px-0 py-0 border-0 hover:bg-transparent">
+            <InteractiveButton
+              variant="ghost"
+              onClick={scrollToTop}
+              className="mb-4 border-0 px-0 py-0 hover:bg-transparent"
+            >
               <BrandLogo size="sm" />
             </InteractiveButton>
-            <p className="text-sm text-muted max-w-xs">
+            <p className="max-w-xs text-sm text-muted">
               Creating beautiful digital experiences from Nepal.
             </p>
           </div>
 
           <div className="md:text-right">
-            <span className="text-xs font-mono text-violet-400 tracking-widest uppercase mb-4 block">Links</span>
+            <span className="mb-4 block text-xs font-mono uppercase tracking-widest text-violet-400">
+              Links
+            </span>
             <ul className="space-y-2">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <a href={link.href} className="text-sm text-muted hover:text-foreground transition-colors">
+                  <a href={link.href} className="text-sm text-muted transition-colors hover:text-foreground">
                     {link.name}
                   </a>
                 </li>
@@ -55,7 +62,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-muted sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Sudhan Bhattarai. All rights reserved.</p>
           <InteractiveButton variant="ghost" onClick={scrollToTop} className="text-xs px-3 py-1.5">
             Back to top ↑
