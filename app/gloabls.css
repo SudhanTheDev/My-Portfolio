@@ -505,19 +505,20 @@
   }
 
   .text-shimmer {
-    background-image: linear-gradient(
-      135deg,
-      #f8fbff 0%,
-      #d8eafe 22%,
-      #e6dcff 48%,
-      #f8d9ee 74%,
-      #eef8ff 100%
-    );
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(96, 165, 250, 0.2) 0%, transparent 24%),
+      radial-gradient(circle at 85% 14%, rgba(196, 181, 253, 0.28) 0%, transparent 26%),
+      radial-gradient(circle at 52% 78%, rgba(251, 191, 36, 0.12) 0%, transparent 18%),
+      radial-gradient(circle at 68% 72%, rgba(244, 114, 182, 0.14) 0%, transparent 20%),
+      linear-gradient(180deg, #fdfefe 0%, #eef4ff 48%, #fdf7ff 100%);
     background-size: 100% 100%;
+    background-position: center;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: hero-name-glow 6.8s ease-in-out infinite;
+    text-shadow:
+      0 0 12px rgba(255,255,255,0.12),
+      0 0 24px rgba(191, 219, 254, 0.12);
   }
 
   .project-emoji {
@@ -533,6 +534,24 @@
     isolation: isolate;
   }
 
+  .brand-logo-text {
+    background-image: linear-gradient(120deg, #f8fafc 0%, #93c5fd 18%, #c4b5fd 36%, #f472b6 54%, #22d3ee 74%, #f8fafc 100%);
+    background-size: 240% auto;
+    animation: shimmer-text 8s linear infinite;
+    text-shadow:
+      0 0 18px rgba(255,255,255,0.3),
+      0 0 28px rgba(96,165,250,0.28),
+      0 0 44px rgba(168,85,247,0.26);
+    filter: saturate(1.08) brightness(1.05);
+  }
+
+  .brand-logo-aura {
+    opacity: 0.88;
+    background-image: linear-gradient(120deg, rgba(255,255,255,0.96) 0%, rgba(96,165,250,0.92) 20%, rgba(168,85,247,0.9) 42%, rgba(244,114,182,0.88) 62%, rgba(34,211,238,0.88) 82%, rgba(255,255,255,0.95) 100%);
+    background-size: 240% auto;
+    animation: shimmer-text 9s linear infinite, brand-aura-pulse 4.8s ease-in-out infinite;
+  }
+
   .brand-logo-halo {
     z-index: -1;
     background:
@@ -545,6 +564,7 @@
     padding-block: 0.1em 0.16em;
     transform-origin: center bottom;
     will-change: transform, filter, opacity;
+    max-width: none;
   }
 
   .hero-name-frame {
@@ -556,6 +576,13 @@
     font-family: var(--font-display), "Segoe UI", sans-serif;
     font-size: 0.96em;
     letter-spacing: -0.03em;
+  }
+
+  .hero-name-nepali {
+    font-family: "Noto Sans Devanagari", "Mangal", "Kokila", "Arial Unicode MS", sans-serif;
+    font-size: 0.9em;
+    letter-spacing: 0.01em;
+    font-weight: 700;
   }
 
   .hero-name-black-chancery {
@@ -570,23 +597,23 @@
 
   .hero-name-black-mustang {
     font-family: "HeroBlackMustang", Impact, sans-serif;
-    font-size: 0.78em;
-    letter-spacing: 0.055em;
+    font-size: 0.72em;
+    letter-spacing: 0.068em;
     font-weight: 900;
     text-transform: uppercase;
   }
 
   .hero-name-zeus-borne {
     font-family: "HeroZeusBorne", Impact, sans-serif;
-    font-size: 0.82em;
-    letter-spacing: 0.04em;
+    font-size: 0.76em;
+    letter-spacing: 0.05em;
     font-weight: 700;
   }
 
   .hero-name-vampire-wars {
     font-family: "HeroVampireWars", Impact, sans-serif;
-    font-size: 0.82em;
-    letter-spacing: 0.034em;
+    font-size: 0.76em;
+    letter-spacing: 0.044em;
     font-weight: 700;
     text-transform: uppercase;
   }
@@ -608,15 +635,15 @@
 
   .hero-name-sanguine-frost {
     font-family: "HeroSanguineFrost", Impact, sans-serif;
-    font-size: 0.82em;
-    letter-spacing: 0.045em;
+    font-size: 0.74em;
+    letter-spacing: 0.055em;
     font-weight: 700;
   }
 
   .hero-name-tarmiles-action {
     font-family: "HeroTarmilesAction", Impact, sans-serif;
-    font-size: 0.8em;
-    letter-spacing: 0.036em;
+    font-size: 0.72em;
+    letter-spacing: 0.05em;
     font-weight: 700;
   }
 
@@ -636,8 +663,8 @@
 
   .hero-name-cheese-milky {
     font-family: "HeroCheeseMilky", "Trebuchet MS", sans-serif;
-    font-size: 0.88em;
-    letter-spacing: 0.016em;
+    font-size: 0.78em;
+    letter-spacing: 0.03em;
     font-weight: 700;
   }
 
@@ -657,23 +684,23 @@
 
   .hero-name-starborn {
     font-family: "HeroStarborn", Impact, sans-serif;
-    font-size: 0.84em;
-    letter-spacing: 0.042em;
+    font-size: 0.76em;
+    letter-spacing: 0.05em;
     font-weight: 700;
   }
 
   .hero-name-lemon-milk {
     font-family: "HeroLemonMilk", Arial, sans-serif;
-    font-size: 0.84em;
-    letter-spacing: 0.045em;
+    font-size: 0.76em;
+    letter-spacing: 0.055em;
     font-weight: 700;
     text-transform: uppercase;
   }
 
   .hero-name-porky {
     font-family: "HeroPorky", "Trebuchet MS", sans-serif;
-    font-size: 0.84em;
-    letter-spacing: 0.038em;
+    font-size: 0.76em;
+    letter-spacing: 0.05em;
     font-weight: 700;
   }
 
@@ -767,6 +794,44 @@
     text-shadow:
       0 0 18px rgba(255,255,255,0.16),
       0 0 30px rgba(96,165,250,0.16);
+  }
+}
+
+@keyframes hero-name-spectrum {
+  0% {
+    background-position: 14% 20%, 80% 18%, 74% 72%, 24% 78%, 50% 48%, 50% 50%;
+    filter: brightness(1) saturate(1.02) hue-rotate(0deg);
+  }
+  25% {
+    background-position: 28% 16%, 68% 30%, 62% 62%, 18% 64%, 42% 34%, 44% 58%;
+    filter: brightness(1.04) saturate(1.08) hue-rotate(-6deg);
+  }
+  50% {
+    background-position: 20% 38%, 86% 22%, 42% 68%, 36% 82%, 58% 58%, 56% 44%;
+    filter: brightness(1.08) saturate(1.12) hue-rotate(6deg);
+  }
+  75% {
+    background-position: 32% 28%, 74% 14%, 56% 56%, 20% 46%, 40% 66%, 46% 62%;
+    filter: brightness(1.05) saturate(1.08) hue-rotate(-4deg);
+  }
+  100% {
+    background-position: 20% 22%, 76% 26%, 48% 60%, 34% 84%, 54% 46%, 52% 52%;
+    filter: brightness(1.06) saturate(1.1) hue-rotate(4deg);
+  }
+}
+
+@keyframes hero-name-color-bloom {
+  0%, 100% {
+    text-shadow:
+      0 0 14px rgba(255,255,255,0.12),
+      0 0 26px rgba(96,165,250,0.16),
+      0 0 36px rgba(196,181,253,0.12);
+  }
+  50% {
+    text-shadow:
+      0 0 18px rgba(255,255,255,0.18),
+      0 0 32px rgba(125,211,252,0.2),
+      0 0 42px rgba(244,114,182,0.16);
   }
 }
 
