@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 const AUDIO_SOURCE =
   process.env.NEXT_PUBLIC_BACKGROUND_AUDIO_URL || "/music/background.mp3";
-const INITIAL_VOLUME = 55;
+const INITIAL_VOLUME = 25;
 
 export function MusicButton() {
   const containerRef = useRef<HTMLDivElement>(null);

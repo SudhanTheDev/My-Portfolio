@@ -1,12 +1,78 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { HeroProfile } from "@/components/hero-profile";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { GlowButton } from "@/components/glow-button";
+import { HeroProfile } from "@/components/hero-profile";
 
 const repeatViewport = { once: true, amount: 0.35 } as const;
 
+const FONT_SWAP_MS = 7500;
+
+const initialHeroName = {
+  text: "\u0938\u0941\u0927\u0928",
+  className: "hero-name-nepali",
+  isNepali: true,
+};
+
+const rotatingHeroNames = [
+  { text: "Sudhan", className: "hero-name-black-chancery", isNepali: false },
+  { text: "Sudhan", className: "hero-name-black-mustang", isNepali: false },
+  { text: "Sudhan", className: "hero-name-zeus-borne", isNepali: false },
+  { text: "Sudhan", className: "hero-name-vampire-wars", isNepali: false },
+  { text: "Sudhan", className: "hero-name-ancient", isNepali: false },
+  { text: "Sudhan", className: "hero-name-dicaten", isNepali: false },
+  { text: "Sudhan", className: "hero-name-sanguine-frost", isNepali: false },
+  { text: "Sudhan", className: "hero-name-tarmiles-action", isNepali: false },
+  { text: "Sudhan", className: "hero-name-cheri", isNepali: false },
+  { text: "Sudhan", className: "hero-name-blue-water", isNepali: false },
+  { text: "Sudhan", className: "hero-name-cheese-milky", isNepali: false },
+  { text: "Sudhan", className: "hero-name-muthiara", isNepali: false },
+  { text: "Sudhan", className: "hero-name-eternelo", isNepali: false },
+  { text: "Sudhan", className: "hero-name-starborn", isNepali: false },
+  { text: "Sudhan", className: "hero-name-lemon-milk", isNepali: false },
+  { text: "Sudhan", className: "hero-name-porky", isNepali: false },
+  { text: "Sudhan", className: "hero-name-brother-signature", isNepali: false },
+  { text: "Sudhan", className: "hero-name-singsong", isNepali: false },
+];
+
+function shuffleNames(names: typeof rotatingHeroNames) {
+  const next = [...names];
+
+  for (let index = next.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
+  }
+
+  return next;
+}
+
 export function HeroSection() {
+  const [fontQueue, setFontQueue] = useState(() => [initialHeroName, ...shuffleNames(rotatingHeroNames)]);
+  const [fontIndex, setFontIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setFontIndex((currentIndex) => {
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < fontQueue.length) {
+          return nextIndex;
+        }
+
+        setFontQueue([initialHeroName, ...shuffleNames(rotatingHeroNames)]);
+        return 0;
+      });
+    }, FONT_SWAP_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [fontQueue]);
+
+  const activeHeroName = useMemo(
+    () => fontQueue[fontIndex] ?? initialHeroName,
+    [fontIndex, fontQueue],
+  );
+
   return (
     <section
       id="home"
@@ -61,11 +127,11 @@ export function HeroSection() {
               >
                 <span className="status-dot h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)]" />
                 <span className="font-semibold text-emerald-400">Available</span>
-                <span className="text-white/72">for freelance ðŸ‘‹</span>
+                <span className="text-white/72">for freelance 👋</span>
               </motion.a>
             </motion.div>
 
-            <h1 className="mb-8 font-display text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl lg:text-8xl">
+            <h1 className="mb-8 font-display text-5xl font-bold leading-[1.14] tracking-tight md:text-6xl lg:text-8xl lg:leading-[1.16]">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -80,22 +146,44 @@ export function HeroSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={repeatViewport}
                 transition={{ duration: 0.5, delay: 0.32 }}
-                className="block"
+                className="block overflow-visible pb-[0.26em] pt-[0.08em]"
               >
-                <span className="brand-logo-glow relative inline-block overflow-visible leading-[0.88]">
-                  <span
-                    className="brand-logo-halo absolute inset-[-0.16em] rounded-full opacity-90 blur-2xl"
-                    aria-hidden
-                  />
-                  <span
-                    className="brand-logo-aura absolute inset-0 select-none bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent blur-lg opacity-70"
-                    aria-hidden
-                  >
-                    Sudhan
-                  </span>
-                  <span className="brand-logo-text relative inline-block bg-gradient-to-r from-white via-blue-200 to-violet-300 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]">
-                    Sudhan
-                  </span>
+                <span className="hero-name-frame brand-logo-glow relative inline-flex overflow-visible align-top leading-none">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={`${activeHeroName.text}-${activeHeroName.className}`}
+                      initial={{ opacity: 0, filter: "blur(16px)", scale: 0.985 }}
+                      animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+                      exit={{ opacity: 0, filter: "blur(14px)", scale: 1.015 }}
+                      transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+                      className={`hero-name-style relative inline-block ${activeHeroName.className}`}
+                    >
+                      <span
+                        className="brand-logo-halo absolute inset-[-0.16em] rounded-full opacity-90 blur-2xl"
+                        aria-hidden
+                      />
+                      {activeHeroName.isNepali ? (
+                        <span
+                          lang="ne"
+                          className="brand-logo-text hero-name-nepali-glow relative inline-block bg-gradient-to-r from-white via-blue-200 to-violet-300 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                        >
+                          {activeHeroName.text}
+                        </span>
+                      ) : (
+                        <>
+                          <span
+                            className="brand-logo-aura absolute inset-0 select-none bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent blur-lg opacity-70"
+                            aria-hidden
+                          >
+                            {activeHeroName.text}
+                          </span>
+                          <span className="brand-logo-text relative inline-block bg-gradient-to-r from-white via-blue-200 to-violet-300 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]">
+                            {activeHeroName.text}
+                          </span>
+                        </>
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
                 </span>
               </motion.span>
             </h1>
@@ -115,10 +203,10 @@ export function HeroSection() {
                 <span className="font-semibold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                   Nepal
                 </span>{" "}
-                ðŸ‡³ðŸ‡µ passionate about crafting{" "}
-                <span className="font-medium text-cyan-300">immersive websites ðŸŒ</span>,{" "}
-                <span className="font-medium text-fuchsia-300">powerful mobile applications ðŸ“±</span>, and{" "}
-                <span className="font-medium text-amber-300">AI-driven experiences ðŸ¤–</span>.
+                🇳🇵 passionate about crafting{" "}
+                <span className="font-medium text-cyan-300">immersive websites 🌐</span>,{" "}
+                <span className="font-medium text-fuchsia-300">powerful mobile applications 📱</span>, and{" "}
+                <span className="font-medium text-amber-300">AI-driven experiences 🤖</span>.
               </motion.p>
 
               <motion.p
@@ -127,12 +215,12 @@ export function HeroSection() {
                 viewport={repeatViewport}
                 transition={{ duration: 0.5, delay: 0.44 }}
               >
-                I combine <span className="font-medium text-pink-300">creativity âœ¨</span>,{" "}
-                <span className="font-medium text-yellow-300">modern technologies âš¡</span>, and{" "}
-                <span className="font-medium text-violet-300">thoughtful design ðŸŽ¨</span> to build digital products that are{" "}
+                I combine <span className="font-medium text-pink-300">creativity ✨</span>,{" "}
+                <span className="font-medium text-yellow-300">modern technologies ⚡</span>, and{" "}
+                <span className="font-medium text-violet-300">thoughtful design 🎨</span> to build digital products that are{" "}
                 <span className="font-medium text-cyan-300">fast</span>,{" "}
                 <span className="font-medium text-white">interactive</span>, and{" "}
-                <span className="font-medium text-emerald-300">memorable</span> â€” always learning ðŸ“š, always creating ðŸš€.
+                <span className="font-medium text-emerald-300">memorable</span> — always learning 📚, always creating 🚀.
               </motion.p>
             </div>
 
