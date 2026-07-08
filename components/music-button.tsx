@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 const AUDIO_SOURCE =
   process.env.NEXT_PUBLIC_BACKGROUND_AUDIO_URL || "/music/background.mp3";
-const INITIAL_VOLUME = 25;
+const INITIAL_VOLUME = 7;
 
 export function MusicButton() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -155,6 +155,7 @@ export function MusicButton() {
   return (
     <div
       ref={containerRef}
+      data-cursor-ignore="true"
       className="relative"
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => {

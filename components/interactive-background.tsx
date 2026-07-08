@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGamesPaused } from "@/hooks/use-games-paused";
 
 interface DustParticle {
   x: number;
@@ -53,6 +54,7 @@ export function InteractiveBackground() {
   const mouseRef = useRef({ x: -320, y: -320, active: false });
   const [lightMode, setLightMode] = useState(false);
   const [effectsMode, setEffectsMode] = useState<EffectsMode>("full");
+  const gamesPaused = useGamesPaused();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -112,6 +114,8 @@ export function InteractiveBackground() {
     let isDocumentVisible = !document.hidden;
     let particles: DustParticle[] = [];
     let glyphs: FloatingGlyph[] = [];
+    let pausedAt: number | null = null;
+    let pausedDuration = 0;
 
     const isLightEffects = effectsMode === "light";
     const isBalancedEffects = effectsMode === "balanced";
@@ -473,24 +477,41 @@ export function InteractiveBackground() {
         return;
       }
 
-      if (time - lastFrameTime < TARGET_FRAME_MS) {
+      if (gamesPaused) {
+        if (pausedAt === null) {
+          pausedAt = time;
+        }
+
+        lastFrameTime = time;
         animationId = requestAnimationFrame(draw);
         return;
       }
 
-      lastFrameTime = time;
+      if (pausedAt !== null) {
+        pausedDuration += time - pausedAt;
+        pausedAt = null;
+      }
+
+      const effectiveTime = time - pausedDuration;
+
+      if (effectiveTime - lastFrameTime < TARGET_FRAME_MS) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+
+      lastFrameTime = effectiveTime;
 
       ctx.clearRect(0, 0, width, height);
 
       const scrollProgress = scrollProgressRef.current;
       scrollEnergyRef.current *= 0.95;
-      const renderedParticles = renderParticles(time, scrollProgress);
+      const renderedParticles = renderParticles(effectiveTime, scrollProgress);
 
       if (glyphs.length > 0) {
-        glyphs.forEach((glyph) => drawGlyph(glyph, time, scrollProgress));
+        glyphs.forEach((glyph) => drawGlyph(glyph, effectiveTime, scrollProgress));
       }
       drawParticleWeb(renderedParticles);
-      drawMouseBloom(time);
+      drawMouseBloom(effectiveTime);
       drawParticles(renderedParticles);
 
       animationId = requestAnimationFrame(draw);
@@ -518,7 +539,7 @@ export function InteractiveBackground() {
       }
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [effectsMode, lightMode]);
+  }, [effectsMode, gamesPaused, lightMode]);
 
   return (
     <div

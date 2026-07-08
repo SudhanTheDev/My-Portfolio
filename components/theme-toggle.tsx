@@ -46,6 +46,7 @@ export function ThemeToggle() {
       <motion.button
         onClick={toggleTheme}
         disabled={isTransitioning}
+        data-cursor-ignore="true"
         whileHover={isTransitioning ? undefined : { scale: 1.08, rotate: 15 }}
         whileTap={isTransitioning ? undefined : { scale: 0.92, rotate: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}

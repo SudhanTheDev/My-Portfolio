@@ -8,6 +8,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { BrandLogo } from "./brand-logo";
 import { InteractiveButton } from "./interactive-button";
 import { MusicButton } from "./music-button";
+import { GamesHubButton } from "./games-hub-button";
 import { transition } from "@/lib/motion";
 
 const navLinks = [
@@ -63,7 +64,11 @@ export function Navbar() {
           scrolled && "mx-3 sm:mx-4 glass-card rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
         )}>
           <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <a href="#home" className="justify-self-start hover:opacity-90 transition-opacity">
+            <a
+              href="#home"
+              data-cursor-ignore="true"
+              className="justify-self-start hover:opacity-90 transition-opacity"
+            >
               <BrandLogo size="md" />
             </a>
 
@@ -89,6 +94,7 @@ export function Navbar() {
 
             <div className="flex items-center justify-self-end gap-3">
               <MusicButton />
+              <GamesHubButton />
               <ThemeToggle />
               <InteractiveButton
                 variant="icon"

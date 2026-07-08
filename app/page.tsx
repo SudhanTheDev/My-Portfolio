@@ -30,10 +30,6 @@ const GallerySection = dynamic(
   () => import('@/components/sections/gallery-section').then((m) => m.GallerySection),
   { loading: () => <SectionSkeleton /> }
 );
-const GamingSection = dynamic(
-  () => import('@/components/sections/gaming-section').then((m) => m.GamingSection),
-  { loading: () => <SectionSkeleton /> }
-);
 const PersonalitySection = dynamic(
   () => import('@/components/sections/personality-section').then((m) => m.PersonalitySection),
   { loading: () => <SectionSkeleton /> }
@@ -99,9 +95,6 @@ export default function Home() {
       </DeferredSection>
       <DeferredSection>
         <GallerySection />
-      </DeferredSection>
-      <DeferredSection>
-        <GamingSection />
       </DeferredSection>
       <DeferredSection>
         <PersonalitySection />

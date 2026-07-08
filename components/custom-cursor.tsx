@@ -17,6 +17,10 @@ const INTERACTIVE_SELECTOR = [
 function getCursorLabel(target: HTMLElement | null) {
   if (!target) return { active: false, label: "", intent: "default" as CursorIntent };
 
+  if (target.closest("[data-cursor-ignore='true']")) {
+    return { active: false, label: "", intent: "default" as CursorIntent };
+  }
+
   const interactiveNode = target.closest(INTERACTIVE_SELECTOR) as HTMLElement | null;
   if (!interactiveNode) {
     return { active: false, label: "", intent: "default" as CursorIntent };

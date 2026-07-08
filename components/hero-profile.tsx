@@ -4,6 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
+import { useGamesPaused } from "@/hooks/use-games-paused";
 import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
 import {
   AlertDialog,
@@ -59,6 +60,7 @@ const socialLinks = [
 ] as const;
 
 export function HeroProfile() {
+  const gamesPaused = useGamesPaused();
   const [crownHovered, setCrownHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>(() =>
@@ -81,7 +83,7 @@ export function HeroProfile() {
     const allowInteractiveMotion = isFinePointer && !prefersReducedMotion && window.innerWidth >= 1024;
 
     setIsInteractive(allowInteractiveMotion);
-    if (!allowInteractiveMotion) return;
+    if (!allowInteractiveMotion || gamesPaused) return;
 
     const onMove = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth - 0.5);
@@ -90,10 +92,10 @@ export function HeroProfile() {
 
     window.addEventListener("mousemove", onMove, { passive: true });
     return () => window.removeEventListener("mousemove", onMove);
-  }, [mouseX, mouseY]);
+  }, [gamesPaused, mouseX, mouseY]);
 
   useEffect(() => {
-    if (!isInteractive) return;
+    if (!isInteractive || gamesPaused) return;
 
     const intervalId = window.setInterval(() => {
       setActiveImage((current) => {
@@ -109,7 +111,7 @@ export function HeroProfile() {
     }, 12000);
 
     return () => window.clearInterval(intervalId);
-  }, [isInteractive, loadedImages]);
+  }, [gamesPaused, isInteractive, loadedImages]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -178,13 +180,14 @@ export function HeroProfile() {
           className="absolute left-1/2 top-0 z-[80] -translate-x-1/2 -translate-y-1/2"
         >
         <motion.div
-          animate={isInteractive ? { y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] } : undefined}
-          transition={isInteractive ? { duration: 4.8, repeat: Infinity, ease: "easeInOut" } : undefined}
+          animate={isInteractive && !gamesPaused ? { y: [0, -6, 0], rotate: [-2, 2.5, -2], scale: [1, 1.04, 1] } : undefined}
+          transition={isInteractive && !gamesPaused ? { duration: 4.8, repeat: Infinity, ease: "easeInOut" } : undefined}
           whileHover={{ scale: 1.08, y: -8 }}
           className="group relative profile-crown-wrap"
         >
           <button
             type="button"
+            data-cursor-ignore="true"
             className="profile-crown flex items-center justify-center rounded-full border border-amber-300/30 bg-[#120a1f]/75 p-3 backdrop-blur-md"
             aria-label="Show Sujan crown label"
           >
@@ -253,8 +256,8 @@ export function HeroProfile() {
             <motion.div
               key={`profile-sweep-${activeImage}`}
               initial={{ opacity: 0, x: "-120%" }}
-              animate={isInteractive ? { opacity: [0, 0.3, 0], x: ["-120%", "5%", "120%"] } : { opacity: 0.18, x: "0%" }}
-              transition={isInteractive ? { duration: 1.15, ease: "easeInOut" } : { duration: 0.2 }}
+              animate={isInteractive && !gamesPaused ? { opacity: [0, 0.3, 0], x: ["-120%", "5%", "120%"] } : { opacity: 0.18, x: "0%" }}
+              transition={isInteractive && !gamesPaused ? { duration: 1.15, ease: "easeInOut" } : { duration: 0.2 }}
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent mix-blend-screen"
             />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-[1.85rem]" />
@@ -263,8 +266,8 @@ export function HeroProfile() {
 
         {isInteractive ? (
           <motion.div
-            animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.02, 1] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            animate={gamesPaused ? undefined : { opacity: [0.3, 0.7, 0.3], scale: [1, 1.02, 1] }}
+            transition={gamesPaused ? undefined : { duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="absolute -inset-2 rounded-[2.1rem] border border-violet-400/30 pointer-events-none"
           />
         ) : null}
