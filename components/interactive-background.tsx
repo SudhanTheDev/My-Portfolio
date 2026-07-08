@@ -44,9 +44,9 @@ interface RenderedParticle {
 }
 
 type EffectsMode = "full" | "balanced" | "light";
+const TARGET_FRAME_MS = 1000 / 60;
 
 export function InteractiveBackground() {
-  const TARGET_FRAME_MS = 1000 / 60;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollProgressRef = useRef(0);
   const scrollDirectionRef = useRef(1);
@@ -104,6 +104,11 @@ export function InteractiveBackground() {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    if (gamesPaused) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -473,16 +478,6 @@ export function InteractiveBackground() {
 
     const draw = (time: number) => {
       if (!isDocumentVisible) {
-        animationId = requestAnimationFrame(draw);
-        return;
-      }
-
-      if (gamesPaused) {
-        if (pausedAt === null) {
-          pausedAt = time;
-        }
-
-        lastFrameTime = time;
         animationId = requestAnimationFrame(draw);
         return;
       }

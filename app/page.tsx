@@ -26,6 +26,10 @@ const StatsSection = dynamic(
   () => import('@/components/sections/stats-secttion').then((m) => m.StatsSection),
   { loading: () => <SectionSkeleton /> }
 );
+const GamingSection = dynamic(
+  () => import('@/components/sections/gaming-section').then((m) => m.GamingSection),
+  { loading: () => <SectionSkeleton /> }
+);
 const GallerySection = dynamic(
   () => import('@/components/sections/gallery-section').then((m) => m.GallerySection),
   { loading: () => <SectionSkeleton /> }
@@ -92,6 +96,9 @@ export default function Home() {
       </DeferredSection>
       <DeferredSection>
         <StatsSection />
+      </DeferredSection>
+      <DeferredSection>
+        <GamingSection />
       </DeferredSection>
       <DeferredSection>
         <GallerySection />

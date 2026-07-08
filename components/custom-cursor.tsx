@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGamesPaused } from "@/hooks/use-games-paused";
 
 type CursorIntent = "default" | "open" | "tap" | "type";
 
@@ -13,6 +14,7 @@ const INTERACTIVE_SELECTOR = [
   "[role='button']",
   "[data-cursor]",
 ].join(", ");
+const TARGET_FRAME_MS = 1000 / 60;
 
 function getCursorLabel(target: HTMLElement | null) {
   if (!target) return { active: false, label: "", intent: "default" as CursorIntent };
@@ -50,7 +52,7 @@ function getHoverStateFromPoint(x: number, y: number) {
 }
 
 export function CustomCursor() {
-  const TARGET_FRAME_MS = 1000 / 60;
+  const gamesPaused = useGamesPaused();
   const [enabled, setEnabled] = useState(false);
   const [visible, setVisible] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -76,7 +78,11 @@ export function CustomCursor() {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const largeViewport = window.innerWidth >= 1024;
 
-    if (!isFinePointer || prefersReducedMotion || !largeViewport) return;
+    if (!isFinePointer || prefersReducedMotion || !largeViewport || gamesPaused) {
+      setVisible(false);
+      document.documentElement.classList.remove("custom-cursor-active");
+      return;
+    }
 
     setEnabled(true);
     document.documentElement.classList.add("custom-cursor-active");
@@ -197,7 +203,7 @@ export function CustomCursor() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [gamesPaused]);
 
   if (!enabled) return null;
 
