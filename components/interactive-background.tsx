@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useGamesPaused } from "@/hooks/use-games-paused";
 
 interface DustParticle {
   x: number;
@@ -54,7 +53,6 @@ export function InteractiveBackground() {
   const mouseRef = useRef({ x: -320, y: -320, active: false });
   const [lightMode, setLightMode] = useState(false);
   const [effectsMode, setEffectsMode] = useState<EffectsMode>("full");
-  const gamesPaused = useGamesPaused();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -104,11 +102,6 @@ export function InteractiveBackground() {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    if (gamesPaused) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      return;
-    }
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -534,7 +527,7 @@ export function InteractiveBackground() {
       }
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [effectsMode, gamesPaused, lightMode]);
+  }, [effectsMode, lightMode]);
 
   return (
     <div

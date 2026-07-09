@@ -8,7 +8,6 @@ import { ThemeToggle } from "./theme-toggle";
 import { BrandLogo } from "./brand-logo";
 import { InteractiveButton } from "./interactive-button";
 import { MusicButton } from "./music-button";
-import { GamesHubButton } from "./games-hub-button";
 import { transition } from "@/lib/motion";
 
 const navLinks = [
@@ -94,7 +93,6 @@ export function Navbar() {
 
             <div className="flex items-center justify-self-end gap-3">
               <MusicButton />
-              <GamesHubButton />
               <ThemeToggle />
               <InteractiveButton
                 variant="icon"

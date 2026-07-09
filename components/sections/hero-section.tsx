@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { GlowButton } from "@/components/glow-button";
 import { HeroProfile } from "@/components/hero-profile";
-import { useGamesPaused } from "@/hooks/use-games-paused";
 
 const repeatViewport = { once: true, amount: 0.35 } as const;
 
@@ -49,13 +48,10 @@ function shuffleNames(names: typeof rotatingHeroNames) {
 }
 
 export function HeroSection() {
-  const gamesPaused = useGamesPaused();
   const [fontQueue, setFontQueue] = useState(() => [initialHeroName, ...shuffleNames(rotatingHeroNames)]);
   const [fontIndex, setFontIndex] = useState(0);
 
   useEffect(() => {
-    if (gamesPaused) return;
-
     const intervalId = window.setInterval(() => {
       setFontIndex((currentIndex) => {
         const nextIndex = currentIndex + 1;
@@ -70,7 +66,7 @@ export function HeroSection() {
     }, FONT_SWAP_MS);
 
     return () => window.clearInterval(intervalId);
-  }, [fontQueue, gamesPaused]);
+  }, [fontQueue]);
 
   const activeHeroName = useMemo(
     () => fontQueue[fontIndex] ?? initialHeroName,
@@ -112,23 +108,19 @@ export function HeroSection() {
             >
               <motion.a
                 href="#contact"
-                animate={
-                  gamesPaused
-                    ? undefined
-                    : {
-                        y: [0, -10, -4, -12, 0],
-                        x: [0, 6, -4, 5, 0],
-                        rotate: [0, 1.2, -0.8, 1, 0],
-                        boxShadow: [
-                          "0 0 0 rgba(16,185,129,0)",
-                          "0 0 24px rgba(16,185,129,0.16)",
-                          "0 0 16px rgba(59,130,246,0.14)",
-                          "0 0 28px rgba(168,85,247,0.18)",
-                          "0 0 0 rgba(16,185,129,0)",
-                        ],
-                      }
-                }
-                transition={gamesPaused ? undefined : { duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
+                animate={{
+                  y: [0, -10, -4, -12, 0],
+                  x: [0, 6, -4, 5, 0],
+                  rotate: [0, 1.2, -0.8, 1, 0],
+                  boxShadow: [
+                    "0 0 0 rgba(16,185,129,0)",
+                    "0 0 24px rgba(16,185,129,0.16)",
+                    "0 0 16px rgba(59,130,246,0.14)",
+                    "0 0 28px rgba(168,85,247,0.18)",
+                    "0 0 0 rgba(16,185,129,0)",
+                  ],
+                }}
+                transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
                 whileHover={{ scale: 1.06, y: -4 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center gap-2.5 rounded-full glass-card px-5 py-2.5 text-xs font-mono uppercase tracking-widest transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/20"
