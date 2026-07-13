@@ -8,6 +8,7 @@ type Theme = "dark" | "light";
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
   mounted: boolean;
   isTransitioning: boolean;
 }
@@ -29,7 +30,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const finishTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const defaultTheme: Theme = "light";
+    const storedTheme = localStorage.getItem("theme");
+    const defaultTheme: Theme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
     setTheme(defaultTheme);
     localStorage.setItem("theme", defaultTheme);
     applyTheme(defaultTheme);
@@ -46,6 +48,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
       document.documentElement.classList.remove("theme-transitioning");
     };
+  }, []);
+
+  const selectTheme = useCallback((newTheme: Theme) => {
+    localStorage.setItem("theme", newTheme);
+    applyTheme(newTheme);
+    setTheme(newTheme);
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -71,7 +79,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [isTransitioning, theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, mounted, isTransitioning }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme: selectTheme, mounted, isTransitioning }}>
       {children}
       <AnimatePresence>
         {isTransitioning && pendingTheme ? (

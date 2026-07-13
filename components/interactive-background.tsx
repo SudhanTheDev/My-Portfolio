@@ -43,9 +43,9 @@ interface RenderedParticle {
 }
 
 type EffectsMode = "full" | "balanced" | "light";
-const TARGET_FRAME_MS = 1000 / 60;
 
 export function InteractiveBackground() {
+  const TARGET_FRAME_MS = 1000 / 60;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollProgressRef = useRef(0);
   const scrollDirectionRef = useRef(1);
@@ -112,8 +112,6 @@ export function InteractiveBackground() {
     let isDocumentVisible = !document.hidden;
     let particles: DustParticle[] = [];
     let glyphs: FloatingGlyph[] = [];
-    let pausedAt: number | null = null;
-    let pausedDuration = 0;
 
     const isLightEffects = effectsMode === "light";
     const isBalancedEffects = effectsMode === "balanced";
@@ -475,12 +473,7 @@ export function InteractiveBackground() {
         return;
       }
 
-      if (pausedAt !== null) {
-        pausedDuration += time - pausedAt;
-        pausedAt = null;
-      }
-
-      const effectiveTime = time - pausedDuration;
+      const effectiveTime = time;
 
       if (effectiveTime - lastFrameTime < TARGET_FRAME_MS) {
         animationId = requestAnimationFrame(draw);

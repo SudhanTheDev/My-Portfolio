@@ -1,24 +1,32 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 const timeline = [
   {
     year: "2022 - Present",
     title: "BIT Student",
-    description: "Pursuing Bachelor of Information Technology, expanding knowledge in software development.",
+    description:
+      "Studying Bachelor in Information Technology at Kuleshwor Awas Campus with focus on programming, web technologies, databases, hardware, and logical problem solving.",
+  },
+  {
+    year: "2026",
+    title: "Advanced Digital Competence",
+    description:
+      "Self-assessed at Advanced Level 6/6 across information literacy, digital collaboration, content creation, safety, and problem solving.",
   },
   {
     year: "2021 - Present",
     title: "Freelance Creative",
-    description: "Providing photography, videography, and graphic design services.",
+    description:
+      "Creating visual content through photography, videography, graphics design, and social media support.",
   },
   {
-    year: "2022 - Present",
-    title: "Flutter Developer",
-    description: "Building cross-platform mobile applications with Flutter and Dart.",
+    year: "Moment Creation",
+    title: "Studio & Front Desk Experience",
+    description:
+      "Handled visitors, calls, emails, schedules, records, office documents, and customer support in a digital studio environment.",
   },
   {
     year: "2023 - Present",
@@ -35,7 +43,6 @@ export function AboutSection() {
     <section id="about" className="py-32 border-t border-border">
       <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Left Side - Intro */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -49,18 +56,17 @@ export function AboutSection() {
             </h2>
             <div className="space-y-6 text-lg text-zinc-400 leading-relaxed">
               <p>
-                I&apos;m Sudhan, a BIT student from <span className="text-white">Nepal</span> 🇳🇵 passionate about building beautiful digital experiences 💻
+                I&apos;m Sudhan, a BIT student from <span className="text-white">Nepal</span> with a strong interest in business, technology, and creative digital work.
               </p>
               <p>
-                I develop modern Flutter applications, AI-powered software, websites, and creative digital products while continuously learning new technologies 🚀
+                My background mixes coding, web technologies, Microsoft Office, social media, photography, videography, and graphics design, so I enjoy projects where technical thinking meets visual storytelling.
               </p>
               <p>
-                I believe software should not only work perfectly but also <span className="text-white">feel beautiful.</span> ✨
+                I&apos;m organized, responsible, and always learning, with advanced digital competence results across data literacy, collaboration, content creation, online safety, and problem solving.
               </p>
             </div>
           </motion.div>
 
-          {/* Right Side - Timeline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -80,8 +86,12 @@ export function AboutSection() {
                   <span className="text-xs font-mono text-zinc-500 tracking-wider mb-2 block group-hover:text-purple-400 transition-colors duration-300">
                     {item.year}
                   </span>
-                  <h3 className="text-lg font-medium text-white mb-2 group-hover:text-purple-200 transition-colors duration-300">{item.title}</h3>
-                  <p className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">{item.description}</p>
+                  <h3 className="text-lg font-medium text-white mb-2 group-hover:text-purple-200 transition-colors duration-300">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">
+                    {item.description}
+                  </p>
                 </div>
               </motion.div>
             ))}

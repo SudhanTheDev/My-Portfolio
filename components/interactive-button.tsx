@@ -46,6 +46,7 @@ interface InteractiveButtonProps {
   showArrow?: boolean;
   target?: string;
   rel?: string;
+  download?: string | boolean;
   "aria-label"?: string;
 }
 
@@ -61,6 +62,7 @@ export function InteractiveButton({
   showArrow,
   target,
   rel,
+  download,
   "aria-label": ariaLabel,
 }: InteractiveButtonProps) {
   const [sparks, setSparks] = useState<Spark[]>([]);
@@ -128,6 +130,7 @@ export function InteractiveButton({
         href={href}
         target={target}
         rel={rel}
+        download={download}
         onPointerDown={burst}
         data-cursor={showArrow ? "Open" : undefined}
         className={cn(classes, "group")}

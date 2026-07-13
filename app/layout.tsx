@@ -17,9 +17,10 @@ export const metadata = {
 const themeScript = `
   (function () {
     try {
-      localStorage.setItem('theme', 'light');
-      document.documentElement.classList.add('light-mode');
-      document.documentElement.style.colorScheme = 'light';
+      var theme = localStorage.getItem('theme');
+      if (theme !== 'dark' && theme !== 'light') theme = 'light';
+      document.documentElement.classList.toggle('light-mode', theme === 'light');
+      document.documentElement.style.colorScheme = theme;
     } catch (e) {}
   })();
 `;

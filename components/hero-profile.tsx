@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
 import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
 import {
@@ -18,10 +18,11 @@ import {
 
 const PROFILE_IMAGES = [
   { src: "/profile.jpg", position: "center 18%" },
-  { src: "/profile-gallery/photo-3.jpg", position: "center 22%" },
   { src: "/profile-gallery/photo-7.jpg", position: "center 18%" },
   { src: "/profile-gallery/photo-8.jpg", position: "center 18%" },
 ];
+
+const CLICK_HOLD_THRESHOLD_MS = 450;
 
 const socialLinks = [
   {
@@ -65,7 +66,9 @@ export function HeroProfile() {
     Object.fromEntries(PROFILE_IMAGES.map((image, index) => [image.src, index === 0]))
   );
   const [isInteractive, setIsInteractive] = useState(false);
+  const [isHoldingImage, setIsHoldingImage] = useState(false);
   const [pendingLink, setPendingLink] = useState<(typeof socialLinks)[number] | null>(null);
+  const pressStartedAtRef = useRef(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -96,6 +99,8 @@ export function HeroProfile() {
     if (!isInteractive) return;
 
     const intervalId = window.setInterval(() => {
+      if (isHoldingImage) return;
+
       setActiveImage((current) => {
         const nextIndex = (current + 1) % PROFILE_IMAGES.length;
         const nextImage = PROFILE_IMAGES[nextIndex];
@@ -109,7 +114,7 @@ export function HeroProfile() {
     }, 12000);
 
     return () => window.clearInterval(intervalId);
-  }, [isInteractive, loadedImages]);
+  }, [isHoldingImage, isInteractive, loadedImages]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -143,6 +148,39 @@ export function HeroProfile() {
     }
 
     setPendingLink(null);
+  };
+
+  const showNextImage = () => {
+    setActiveImage((current) => {
+      for (let offset = 1; offset <= PROFILE_IMAGES.length; offset += 1) {
+        const nextIndex = (current + offset) % PROFILE_IMAGES.length;
+        const nextImage = PROFILE_IMAGES[nextIndex];
+
+        if (loadedImages[nextImage.src]) {
+          return nextIndex;
+        }
+      }
+
+      return current;
+    });
+  };
+
+  const handleImagePointerDown = () => {
+    pressStartedAtRef.current = Date.now();
+    setIsHoldingImage(true);
+  };
+
+  const handleImagePointerUp = () => {
+    const pressDuration = Date.now() - pressStartedAtRef.current;
+    setIsHoldingImage(false);
+
+    if (pressDuration < CLICK_HOLD_THRESHOLD_MS) {
+      showNextImage();
+    }
+  };
+
+  const handleImagePointerCancel = () => {
+    setIsHoldingImage(false);
   };
 
   return (
@@ -205,8 +243,25 @@ export function HeroProfile() {
         </motion.div>
         </div>
 
-        <div className="relative rounded-[2rem] p-[3px] bg-gradient-to-br from-blue-400/60 via-violet-500/50 to-fuchsia-500/40 shadow-[0_0_60px_rgba(99,102,241,0.35)]">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.85rem] bg-surface">
+        <motion.div
+          role="button"
+          tabIndex={0}
+          aria-label="Change profile photo"
+          onPointerDown={handleImagePointerDown}
+          onPointerUp={handleImagePointerUp}
+          onPointerCancel={handleImagePointerCancel}
+          onPointerLeave={handleImagePointerCancel}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              showNextImage();
+            }
+          }}
+          whileTap={{ scale: 0.985 }}
+          data-cursor="Next"
+          className="relative cursor-pointer rounded-[2rem] p-[3px] bg-gradient-to-br from-blue-400/60 via-violet-500/50 to-fuchsia-500/40 shadow-[0_0_60px_rgba(99,102,241,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70"
+        >
+          <div className="relative aspect-[4/5] w-full select-none overflow-hidden rounded-[1.85rem] bg-surface">
             {PROFILE_IMAGES.map((image, index) => {
               const isVisible = index === activeImage;
               const isLoaded = loadedImages[image.src];
@@ -260,7 +315,7 @@ export function HeroProfile() {
             />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-[1.85rem]" />
           </div>
-        </div>
+        </motion.div>
 
         {isInteractive ? (
           <motion.div

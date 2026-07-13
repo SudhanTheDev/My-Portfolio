@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { Download } from "lucide-react";
 import { GlowButton } from "@/components/glow-button";
 import { HeroProfile } from "@/components/hero-profile";
 
@@ -108,18 +109,20 @@ export function HeroSection() {
             >
               <motion.a
                 href="#contact"
-                animate={{
-                  y: [0, -10, -4, -12, 0],
-                  x: [0, 6, -4, 5, 0],
-                  rotate: [0, 1.2, -0.8, 1, 0],
-                  boxShadow: [
-                    "0 0 0 rgba(16,185,129,0)",
-                    "0 0 24px rgba(16,185,129,0.16)",
-                    "0 0 16px rgba(59,130,246,0.14)",
-                    "0 0 28px rgba(168,85,247,0.18)",
-                    "0 0 0 rgba(16,185,129,0)",
-                  ],
-                }}
+                animate={
+                  {
+                    y: [0, -10, -4, -12, 0],
+                    x: [0, 6, -4, 5, 0],
+                    rotate: [0, 1.2, -0.8, 1, 0],
+                    boxShadow: [
+                      "0 0 0 rgba(16,185,129,0)",
+                      "0 0 24px rgba(16,185,129,0.16)",
+                      "0 0 16px rgba(59,130,246,0.14)",
+                      "0 0 28px rgba(168,85,247,0.18)",
+                      "0 0 0 rgba(16,185,129,0)",
+                    ],
+                  }
+                }
                 transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
                 whileHover={{ scale: 1.06, y: -4 }}
                 whileTap={{ scale: 0.98 }}
@@ -146,7 +149,7 @@ export function HeroSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={repeatViewport}
                 transition={{ duration: 0.5, delay: 0.32 }}
-                className="block overflow-visible pb-[0.26em] pt-[0.08em]"
+                className="block h-[1.36em] overflow-visible pb-[0.26em] pt-[0.08em]"
               >
                 <span className="hero-name-frame brand-logo-glow relative inline-flex overflow-visible align-top leading-none">
                   <AnimatePresence mode="wait">
@@ -188,7 +191,7 @@ export function HeroSection() {
               </motion.span>
             </h1>
 
-            <div className="mb-10 max-w-2xl space-y-5 text-lg leading-relaxed text-white/78">
+            <div className="mb-10 max-w-2xl space-y-5 font-sans text-lg leading-relaxed text-white/78">
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -197,13 +200,13 @@ export function HeroSection() {
               >
                 A{" "}
                 <span className="font-semibold text-blue-400 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]">
-                  20-year-old developer
+                  BIT student and creative developer
                 </span>{" "}
                 from{" "}
                 <span className="font-semibold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                   Nepal
                 </span>{" "}
-                🇳🇵 passionate about crafting{" "}
+                🇳🇵 building{" "}
                 <span className="font-medium text-cyan-300">immersive websites 🌐</span>,{" "}
                 <span className="font-medium text-fuchsia-300">powerful mobile applications 📱</span>, and{" "}
                 <span className="font-medium text-amber-300">AI-driven experiences 🤖</span>.
@@ -216,7 +219,7 @@ export function HeroSection() {
                 transition={{ duration: 0.5, delay: 0.44 }}
               >
                 I combine <span className="font-medium text-pink-300">creativity ✨</span>,{" "}
-                <span className="font-medium text-yellow-300">modern technologies ⚡</span>, and{" "}
+                <span className="font-medium text-yellow-300">advanced digital competence</span>, and{" "}
                 <span className="font-medium text-violet-300">thoughtful design 🎨</span> to build digital products that are{" "}
                 <span className="font-medium text-cyan-300">fast</span>,{" "}
                 <span className="font-medium text-white">interactive</span>, and{" "}
@@ -232,6 +235,15 @@ export function HeroSection() {
               className="flex flex-wrap gap-4"
             >
               <GlowButton href="#projects">Explore My Work</GlowButton>
+              <GlowButton
+                href="/sudhan-bhattarai-cv.pdf"
+                variant="secondary"
+                download="Sudhan-Bhattarai-CV.pdf"
+                className="border-blue-300/30 bg-blue-400/10"
+              >
+                <Download className="h-4 w-4" />
+                Download CV
+              </GlowButton>
               <GlowButton href="#contact" variant="secondary" className="hero-contact-rgb">
                 Get In Touch
               </GlowButton>

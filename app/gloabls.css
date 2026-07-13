@@ -575,6 +575,8 @@
   .hero-name-frame {
     position: relative;
     overflow: visible;
+    align-items: center;
+    min-height: 1.18em;
     padding: 0.12em 0.14em 0.24em;
     margin: -0.12em -0.14em -0.24em;
   }
