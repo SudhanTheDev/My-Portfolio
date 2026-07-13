@@ -17,7 +17,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-white/10 py-24">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-violet-950/20 to-transparent" />
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         <div className="glass-card mb-12 rounded-3xl p-10 text-center md:p-14">
           <h2 className="mb-4 text-3xl font-bold font-display md:text-5xl">
             <span className="text-shimmer">Let&apos;s build something epic</span>

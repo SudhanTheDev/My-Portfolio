@@ -248,7 +248,7 @@ export function ServicesSection() {
 
   return (
     <section id="services" className="relative overflow-hidden py-32">
-      <div ref={ref} className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div ref={ref} className="mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

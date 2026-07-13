@@ -159,7 +159,7 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="relative py-32">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/10 to-transparent" />
-      <div ref={ref} className="relative mx-auto max-w-7xl px-6 lg:px-8">
+      <div ref={ref} className="relative mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

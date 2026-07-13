@@ -48,7 +48,7 @@ export function StatsSection() {
 
   return (
     <section ref={ref} className="py-20 border-t border-border">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {stats.map((stat, index) => (
             <motion.div

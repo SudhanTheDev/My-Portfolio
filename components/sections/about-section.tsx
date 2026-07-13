@@ -41,7 +41,7 @@ export function AboutSection() {
 
   return (
     <section id="about" className="py-32 border-t border-border">
-      <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div ref={ref} className="mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

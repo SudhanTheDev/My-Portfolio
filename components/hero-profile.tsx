@@ -5,6 +5,8 @@ import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from
 import { useEffect, useRef, useState } from "react";
 import { scaleIn, transition } from "@/lib/motion";
 import { Crown, Github, Linkedin, Instagram, Mail } from "lucide-react";
+import { DiscordIcon } from "@/components/discord-icon";
+import { NglMessagePanel } from "@/components/ngl-message-panel";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,6 +69,7 @@ export function HeroProfile() {
   );
   const [isInteractive, setIsInteractive] = useState(false);
   const [isHoldingImage, setIsHoldingImage] = useState(false);
+  const [discordCopied, setDiscordCopied] = useState(false);
   const [pendingLink, setPendingLink] = useState<(typeof socialLinks)[number] | null>(null);
   const pressStartedAtRef = useRef(0);
   const mouseX = useMotionValue(0);
@@ -183,6 +186,26 @@ export function HeroProfile() {
     setIsHoldingImage(false);
   };
 
+  const handleDiscordCopy = async () => {
+    const username = "itzme_sujan";
+
+    try {
+      await navigator.clipboard.writeText(username);
+    } catch {
+      const input = document.createElement("textarea");
+      input.value = username;
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+    }
+
+    setDiscordCopied(true);
+    window.setTimeout(() => setDiscordCopied(false), 1800);
+  };
+
   return (
     <motion.div
       variants={scaleIn}
@@ -192,6 +215,7 @@ export function HeroProfile() {
       className="relative w-full max-w-[390px] mx-auto lg:mx-0"
       style={{ perspective: 1200 }}
     >
+      <div className="relative">
       {isInteractive ? (
         <motion.div
           className="absolute -inset-6 rounded-[2.5rem] opacity-80"
@@ -348,6 +372,8 @@ export function HeroProfile() {
           <a
             key={link.name}
             href={link.href}
+            aria-label={link.name}
+            data-cursor-ignore="true"
             target={link.href.startsWith("mailto:") ? undefined : "_blank"}
             rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
             onClick={(event) => handleSocialClick(event, link)}
@@ -358,7 +384,33 @@ export function HeroProfile() {
             />
           </a>
         ))}
+        <div
+          className={`group/discord relative flex h-10 items-center justify-start transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            discordCopied
+              ? "w-[9rem]"
+              : "w-10 hover:w-[6.75rem] focus-within:w-[6.75rem]"
+          }`}
+        >
+          <button
+            type="button"
+            aria-label="Copy Discord username itzme_sujan"
+            data-cursor-ignore="true"
+            onClick={handleDiscordCopy}
+            className="flex h-10 w-full items-center justify-start gap-2 overflow-hidden rounded-full glass-card px-2.5 text-zinc-400 transition-all duration-300 hover:bg-[#5865f2]/15 hover:text-[#7289ff] hover:shadow-[0_0_30px_rgba(88,101,242,0.55)] focus-visible:text-[#7289ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7289ff]/60"
+          >
+            <DiscordIcon className="h-5 w-5 shrink-0" />
+            <span
+              aria-live="polite"
+              className="translate-x-2 whitespace-nowrap text-[0.68rem] font-semibold tracking-wide text-amber-300 opacity-0 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)] transition-all duration-300 group-hover/discord:translate-x-0 group-hover/discord:opacity-100 group-focus-within/discord:translate-x-0 group-focus-within/discord:opacity-100"
+            >
+              {discordCopied ? "Copied Username" : "itzme_sujan"}
+            </span>
+          </button>
+        </div>
       </motion.div>
+      </div>
+
+      <NglMessagePanel />
 
       <AlertDialog open={pendingLink !== null} onOpenChange={(open) => !open && setPendingLink(null)}>
         <AlertDialogContent className="leave-page-dialog max-w-md border-white/10 bg-[#120a1f]/96 text-white shadow-[0_20px_80px_rgba(3,0,20,0.5)] backdrop-blur-2xl">

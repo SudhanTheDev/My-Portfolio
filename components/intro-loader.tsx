@@ -17,6 +17,7 @@ const preloadAssets = [
   "/profile-gallery/photo-6.jpg",
   "/profile-gallery/photo-7.jpg",
   "/profile-gallery/photo-8.jpg",
+  "/ngl-icon.png",
   "/music/background.mp3",
   "/sudhan-bhattarai-cv.pdf",
   "/digital-competences-report.pdf",

@@ -16,7 +16,7 @@ export function PersonalitySection() {
 
   return (
     <section id="personality" className="py-32 border-t border-border">
-      <div ref={ref} className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div ref={ref} className="mx-auto max-w-[104rem] px-6 lg:px-10 xl:px-12">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

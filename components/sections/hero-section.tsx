@@ -81,7 +81,7 @@ export function HeroSection() {
     >
       <div className="pointer-events-none absolute left-1/2 top-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-600/10 blur-[120px]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
+      <div className="relative z-10 mx-auto w-full max-w-[104rem] px-6 py-24 lg:px-10 lg:py-32 xl:px-12">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
