@@ -1,8 +1,18 @@
 "use client";
 
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ExternalLink, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import {
+  Code2,
+  ExternalLink,
+  FileSpreadsheet,
+  type LucideIcon,
+  MessagesSquare,
+  Palette,
+  Smartphone,
+  TerminalSquare,
+  X,
+} from "lucide-react";
+import { type CSSProperties, type MouseEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const skillCategories = [
@@ -149,6 +159,117 @@ const digitalCompetencies = [
   "Problem solving",
 ];
 
+type SkillCategory = (typeof skillCategories)[number];
+
+const skillIcons: Record<string, LucideIcon> = {
+  "Web Development": Code2,
+  "Mobile Development": Smartphone,
+  "Programming & IT": TerminalSquare,
+  "Design & Creative": Palette,
+  "Professional Tools": FileSpreadsheet,
+  "Work & Communication": MessagesSquare,
+};
+
+type SpotlightStyle = CSSProperties & {
+  "--spotlight-x": string;
+  "--spotlight-y": string;
+};
+
+function ExpertiseSpotlightCard({
+  category,
+  index,
+  isInView,
+  onOpen,
+}: {
+  category: SkillCategory;
+  index: number;
+  isInView: boolean;
+  onOpen: () => void;
+}) {
+  const Icon = skillIcons[category.title];
+
+  const moveSpotlight = (event: MouseEvent<HTMLButtonElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--spotlight-x", `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty("--spotlight-y", `${event.clientY - bounds.top}px`);
+  };
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onOpen}
+      onMouseMove={moveSpotlight}
+      initial={{ opacity: 0, y: 22 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+      whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ duration: 0.5, delay: 0.08 + index * 0.07 }}
+      style={
+        {
+          "--spotlight-x": "50%",
+          "--spotlight-y": "50%",
+        } as SpotlightStyle
+      }
+      className="group relative isolate min-h-[292px] overflow-hidden rounded-[1.65rem] border border-border bg-background p-3 text-left outline-none transition-[border-color,box-shadow] duration-300 hover:border-blue-300/25 hover:shadow-[0_22px_70px_rgba(2,6,23,0.38)] focus-visible:ring-2 focus-visible:ring-blue-300/70"
+    >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+        style={{
+          background:
+            "radial-gradient(260px circle at var(--spotlight-x) var(--spotlight-y), rgba(96,165,250,0.9) 0%, rgba(167,139,250,0.52) 28%, rgba(244,114,182,0.16) 48%, transparent 72%)",
+        }}
+      />
+
+      <div className="relative z-10 flex h-full min-h-[266px] flex-col overflow-hidden rounded-[1.05rem] border border-border bg-card p-6 md:p-7">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+          style={{
+            background:
+              "radial-gradient(440px circle at var(--spotlight-x) var(--spotlight-y), rgba(59,130,246,0.12), rgba(139,92,246,0.07) 34%, transparent 70%)",
+          }}
+        />
+        <span className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+        <div className="relative flex items-start justify-between gap-4">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/[0.04] text-zinc-300 transition-all duration-300 group-hover:border-blue-300/30 group-hover:text-blue-200 group-hover:shadow-[0_0_24px_rgba(96,165,250,0.18)]">
+            <Icon className="h-[18px] w-[18px]" />
+          </span>
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white/[0.025] text-zinc-500 transition-all duration-300 group-hover:border-blue-300/30 group-hover:text-blue-200">
+            <ExternalLink className="h-4 w-4" />
+          </span>
+        </div>
+
+        <div className="relative mt-8 flex flex-wrap gap-2">
+          {category.skills.slice(0, 3).map((skill) => (
+            <span
+              key={skill}
+              className="rounded-full border border-border bg-white/[0.025] px-2.5 py-1 text-[11px] text-muted transition-colors duration-300 group-hover:border-blue-300/20 group-hover:text-zinc-300"
+            >
+              {skill}
+            </span>
+          ))}
+          {category.skills.length > 3 ? (
+            <span className="rounded-full border border-border bg-white/[0.025] px-2.5 py-1 text-[11px] text-muted">
+              +{category.skills.length - 3}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="relative mt-auto pt-8">
+          <h3 className="text-xl font-semibold tracking-tight text-foreground transition-all duration-300 group-hover:text-shimmer">
+            {category.title}
+          </h3>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted">
+            {category.summary}
+          </p>
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
 export function SkillsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-100px" });
@@ -189,41 +310,15 @@ export function SkillsSection() {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {skillCategories.map((category, index) => (
-            <motion.button
-              type="button"
+            <ExpertiseSpotlightCard
               key={category.title}
-              onClick={() => setSelectedCategory(category)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              whileHover={{ y: -6 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
-              className="group rounded-2xl text-left outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-300/70"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-xl font-medium mb-6 text-white group-hover:text-shimmer transition-all">
-                  {category.title}
-                </h3>
-                <span className="mb-6 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition-all duration-300 group-hover:border-blue-300/40 group-hover:text-blue-200">
-                  <ExternalLink className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="h-full pt-8 border-t border-border group-hover:border-zinc-600 transition-colors duration-500">
-                <ul className="space-y-3">
-                  {category.skills.map((skill) => (
-                    <motion.li
-                      key={skill}
-                      whileHover={{ x: 4 }}
-                      className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors duration-300 cursor-default"
-                    >
-                      {skill}
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </motion.button>
+              category={category}
+              index={index}
+              isInView={isInView}
+              onOpen={() => setSelectedCategory(category)}
+            />
           ))}
         </div>
 
@@ -350,14 +445,6 @@ export function SkillsSection() {
                         </li>
                       ))}
                     </ul>
-                    <a
-                      href="/digital-competences-report.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-6 inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:border-blue-300/50 hover:bg-blue-400/10"
-                    >
-                      View competence report
-                    </a>
                   </div>
                 </div>
               </div>

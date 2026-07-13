@@ -6,9 +6,11 @@ interface GlowButtonProps {
   variant?: "primary" | "secondary";
   className?: string;
   download?: string | boolean;
+  target?: string;
+  rel?: string;
 }
 
-export function GlowButton({ href, children, variant = "primary", className, download }: GlowButtonProps) {
+export function GlowButton({ href, children, variant = "primary", className, download, target, rel }: GlowButtonProps) {
   return (
     <InteractiveButton
       href={href}
@@ -16,6 +18,8 @@ export function GlowButton({ href, children, variant = "primary", className, dow
       showArrow={variant === "primary"}
       className={className}
       download={download}
+      target={target}
+      rel={rel}
     >
       {children}
     </InteractiveButton>

@@ -2,10 +2,9 @@
 
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, X } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
-import { InteractiveButton } from "@/components/interactive-button";
 import { viewport } from "@/lib/motion";
 
 const projects = [
@@ -109,36 +108,15 @@ export function ProjectsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, viewport);
   const [selectedProject, setSelectedProject] = useState<(typeof projects)[number] | null>(null);
-  const [activeSlides, setActiveSlides] = useState<Record<string, number>>(() =>
-    Object.fromEntries(projects.map((project) => [project.title, 0]))
-  );
+  const [activeProject, setActiveProject] = useState(0);
 
-  useEffect(() => {
-    const timeoutIds: number[] = [];
+  const handleNext = () => {
+    setActiveProject((current) => (current + 1) % projects.length);
+  };
 
-    const scheduleNextSwap = (title: string, imageCount: number, delay: number) => {
-      const timeoutId = window.setTimeout(() => {
-        setActiveSlides((current) => ({
-          ...current,
-          [title]: ((current[title] ?? 0) + 1) % imageCount,
-        }));
-
-        const nextDelay = 3500 + Math.floor(Math.random() * 8000);
-        scheduleNextSwap(title, imageCount, nextDelay);
-      }, delay);
-
-      timeoutIds.push(timeoutId);
-    };
-
-    projects.forEach((project, index) => {
-      const initialDelay = 4500 + index * 1400 + Math.floor(Math.random() * 3500);
-      scheduleNextSwap(project.title, project.images.length, initialDelay);
-    });
-
-    return () => {
-      timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    };
-  }, []);
+  const handlePrevious = () => {
+    setActiveProject((current) => (current - 1 + projects.length) % projects.length);
+  };
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -164,68 +142,163 @@ export function ProjectsSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between"
+          className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between"
         >
           <SectionHeader label="Featured Work" title="Selected Projects" className="mb-0" />
-          <InteractiveButton href="#" variant="pill" showArrow className="mt-6 md:mt-0">
-            View All
-          </InteractiveButton>
+          <div className="mt-6 rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 font-mono text-xs uppercase tracking-[0.24em] text-violet-300 md:mt-0">
+            {String(activeProject + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          {projects.map((project, index) => {
-            const activeSlide = activeSlides[project.title] ?? 0;
-            const currentImage = project.images[activeSlide];
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.025] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.3)] md:p-8 lg:p-12"
+        >
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+            <div className="relative h-[24rem] sm:h-[30rem]">
+              <AnimatePresence initial={false}>
+                {projects.map((project, index) => {
+                  const isActive = index === activeProject;
+                  const offset = (index - activeProject + projects.length) % projects.length;
+                  const signedOffset = offset > projects.length / 2 ? offset - projects.length : offset;
+                  const rotation = signedOffset * 6;
 
-            return (
-              <motion.button
-                type="button"
-                key={project.title}
-                onClick={() => setSelectedProject(project)}
-                data-cursor="Open"
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-                className="group glow-card block overflow-hidden text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={currentImage}
-                      initial={{ opacity: 0, scale: 1.06 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                      src={currentImage}
-                      alt={project.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="grayscale-to-color absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </AnimatePresence>
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-t ${project.accent} mix-blend-overlay opacity-0 transition-opacity duration-500 group-hover:opacity-20`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030014] via-transparent to-transparent opacity-60" />
-                  <div className="glass-effect absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full opacity-0 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100">
-                    <ArrowUpRight className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-                <div className="p-6">
-                  <p className="mb-2 text-xs font-mono uppercase tracking-widest text-violet-400">
-                    {project.category}
+                  return (
+                    <motion.button
+                      type="button"
+                      key={project.title}
+                      onClick={() => {
+                        if (isActive) {
+                          setSelectedProject(project);
+                          return;
+                        }
+
+                        setActiveProject(index);
+                      }}
+                      data-cursor={isActive ? "Open" : "Tap"}
+                      aria-label={isActive ? `Open ${project.title} details` : `Select ${project.title}`}
+                      initial={{ opacity: 0, scale: 0.88, z: -100, rotate: rotation }}
+                      animate={{
+                        opacity: isActive ? 1 : 0.48,
+                        scale: isActive ? 1 : 0.92,
+                        z: isActive ? 0 : -100,
+                        rotate: isActive ? 0 : rotation,
+                        x: signedOffset * 14,
+                        y: isActive ? [0, -34, 0] : Math.abs(signedOffset) * 8,
+                        zIndex: isActive ? 30 : projects.length - Math.abs(signedOffset),
+                      }}
+                      exit={{ opacity: 0, scale: 0.88, z: 100, rotate: -rotation }}
+                      transition={{ duration: 0.48, ease: "easeInOut" }}
+                      className="group absolute inset-0 origin-bottom overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#090818] text-left shadow-[0_28px_80px_rgba(0,0,0,0.5)] outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70"
+                    >
+                      <img
+                        src={project.images[0]}
+                        alt={project.title}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-br ${project.accent} opacity-20 mix-blend-overlay`} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050411] via-transparent to-black/10" />
+                      {isActive ? (
+                        <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 sm:bottom-7 sm:left-7 sm:right-7">
+                          <div>
+                            <p className="text-xs font-mono uppercase tracking-[0.28em] text-violet-200">
+                              {project.category}
+                            </p>
+                            <p className="mt-2 text-xl font-bold text-white sm:text-2xl">
+                              {project.title}
+                            </p>
+                          </div>
+                          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-md">
+                            <ArrowUpRight className="h-5 w-5" />
+                          </span>
+                        </div>
+                      ) : null}
+                    </motion.button>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+
+            <div className="flex min-h-[25rem] flex-col justify-between py-2">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeProject}
+                  initial={{ y: 22, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -22, opacity: 0 }}
+                  transition={{ duration: 0.28, ease: "easeInOut" }}
+                >
+                  <p className="text-xs font-mono uppercase tracking-[0.3em] text-violet-300">
+                    {projects[activeProject].category}
                   </p>
-                  <h3 className="font-display text-xl font-bold text-foreground transition-all group-hover:text-shimmer group-hover:drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-                    <span>{project.title}</span>
-                    <span className="project-emoji ml-2 inline-block align-middle text-foreground group-hover:text-violet-300">
-                      {project.emoji}
-                    </span>
+                  <h3 className="mt-4 font-display text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+                    {projects[activeProject].title}{" "}
+                    <span className="project-emoji align-middle">{projects[activeProject].emoji}</span>
                   </h3>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
+
+                  <p className="mt-7 text-base leading-relaxed text-zinc-400 md:text-lg">
+                    {projectDetails[projects[activeProject].title as keyof typeof projectDetails].summary
+                      .split(" ")
+                      .map((word, index) => (
+                        <motion.span
+                          key={`${activeProject}-${index}`}
+                          initial={{ filter: "blur(10px)", opacity: 0, y: 5 }}
+                          animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut", delay: 0.018 * index }}
+                          className="inline-block"
+                        >
+                          {word}&nbsp;
+                        </motion.span>
+                      ))}
+                  </p>
+
+                  <div className="mt-7 flex flex-wrap gap-2">
+                    {projectDetails[projects[activeProject].title as keyof typeof projectDetails].stack.map((item) => (
+                      <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-zinc-300">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProject(projects[activeProject])}
+                    className="mt-8 inline-flex items-center gap-2 rounded-xl border border-violet-300/25 bg-violet-400/10 px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:border-violet-300/50 hover:bg-violet-400/15 hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]"
+                  >
+                    Open case study
+                    <ArrowUpRight className="h-4 w-4" />
+                  </button>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="mt-10 flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  aria-label="Show previous project"
+                  className="group/button flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white transition-all hover:border-blue-300/40 hover:bg-blue-400/10"
+                >
+                  <ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover/button:-translate-x-0.5 group-hover/button:-rotate-12" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Show next project"
+                  className="group/button flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white transition-all hover:border-violet-300/40 hover:bg-violet-400/10"
+                >
+                  <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover/button:translate-x-0.5 group-hover/button:rotate-12" />
+                </button>
+                <span className="ml-2 text-xs font-mono uppercase tracking-[0.22em] text-zinc-500">
+                  Browse projects
+                </span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {typeof document !== "undefined"

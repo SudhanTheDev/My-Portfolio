@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { Download } from "lucide-react";
+import { Eye } from "lucide-react";
 import { GlowButton } from "@/components/glow-button";
 import { HeroProfile } from "@/components/hero-profile";
 
@@ -189,6 +189,9 @@ export function HeroSection() {
                   </AnimatePresence>
                 </span>
               </motion.span>
+              <span className="mt-1 block font-sans text-base font-normal tracking-[0.16em] text-white/55 drop-shadow-[0_0_10px_rgba(147,197,253,0.28)] md:text-lg">
+                aka <span className="font-semibold text-blue-200/90">Sujan</span>
+              </span>
             </h1>
 
             <div className="mb-10 max-w-2xl space-y-5 font-sans text-lg leading-relaxed text-white/78">
@@ -238,11 +241,12 @@ export function HeroSection() {
               <GlowButton
                 href="/sudhan-bhattarai-cv.pdf"
                 variant="secondary"
-                download="Sudhan-Bhattarai-CV.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="border-blue-300/30 bg-blue-400/10"
               >
-                <Download className="h-4 w-4" />
-                Download CV
+                <Eye className="h-4 w-4" />
+                View CV
               </GlowButton>
               <GlowButton href="#contact" variant="secondary" className="hero-contact-rgb">
                 Get In Touch

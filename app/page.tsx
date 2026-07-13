@@ -76,22 +76,22 @@ export default function Home() {
 
       <HeroSection />
       <DeferredSection>
+        <AboutSection />
+      </DeferredSection>
+      <DeferredSection>
         <ServicesSection />
       </DeferredSection>
       <DeferredSection>
         <ProjectsSection />
       </DeferredSection>
       <DeferredSection>
-        <AboutSection />
-      </DeferredSection>
-      <DeferredSection>
-        <ExperienceSection />
-      </DeferredSection>
-      <DeferredSection>
         <SkillsSection />
       </DeferredSection>
       <DeferredSection>
         <StatsSection />
+      </DeferredSection>
+      <DeferredSection>
+        <ExperienceSection />
       </DeferredSection>
       <DeferredSection>
         <GallerySection />
