@@ -65,6 +65,16 @@ export function AboutSection() {
                 I&apos;m organized, responsible, and always learning, with advanced digital competence results across data literacy, collaboration, content creation, online safety, and problem solving.
               </p>
             </div>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a
+                href="/digital-competences-report.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-xl border border-blue-300/30 bg-blue-400/10 px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:border-blue-300/60 hover:bg-blue-400/15 hover:shadow-lg hover:shadow-blue-500/15"
+              >
+                View Digital Competence Report
+              </a>
+            </div>
           </motion.div>
 
           <motion.div

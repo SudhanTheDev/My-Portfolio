@@ -207,7 +207,7 @@ export function CustomCursor() {
 
   return (
     <div
-      className={`fixed inset-0 pointer-events-none z-[9999] transition-opacity duration-300 ${
+      className={`fixed inset-0 pointer-events-none z-[2147483647] transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
       aria-hidden
