@@ -969,6 +969,68 @@ html.light-mode .dark-video-background {
   display: none;
 }
 
+.testimonial-panel {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--testimonial-accent) 17%, transparent), transparent 42%),
+    rgba(9, 7, 25, 0.82);
+  border: 1px solid color-mix(in srgb, var(--testimonial-accent) 26%, rgba(255, 255, 255, 0.08));
+  clip-path: polygon(0 0, calc(100% - 2rem) 0, 100% 2rem, 100% 100%, 2rem 100%, 0 calc(100% - 2rem));
+  backdrop-filter: blur(16px);
+  transition: border-color 400ms ease, background 400ms ease, transform 400ms ease;
+}
+
+.testimonial-panel:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--testimonial-accent) 52%, rgba(255, 255, 255, 0.12));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--testimonial-accent) 24%, transparent), transparent 46%),
+    rgba(12, 9, 31, 0.9);
+}
+
+html.light-mode .testimonial-panel {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--testimonial-accent) 10%, transparent), transparent 42%),
+    rgba(255, 255, 255, 0.88);
+  border-color: color-mix(in srgb, var(--testimonial-accent) 20%, rgba(15, 23, 42, 0.1));
+}
+
+.timeline-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(124, 58, 237, 0.045));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  clip-path: polygon(0 0, calc(100% - 1.2rem) 0, 100% 1.2rem, 100% 100%, 0.8rem 100%, 0 calc(100% - 0.8rem));
+  backdrop-filter: blur(14px);
+}
+
+.stat-prism {
+  background: linear-gradient(145deg, rgba(96, 165, 250, 0.075), rgba(167, 139, 250, 0.045));
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  clip-path: polygon(0.8rem 0, 100% 0, 100% calc(100% - 0.8rem), calc(100% - 0.8rem) 100%, 0 100%, 0 0.8rem);
+  transition: border-color 350ms ease, background 350ms ease, box-shadow 350ms ease;
+}
+
+.stat-prism:hover {
+  border-color: rgba(125, 211, 252, 0.28);
+  background: linear-gradient(145deg, rgba(96, 165, 250, 0.13), rgba(167, 139, 250, 0.075));
+  box-shadow: 0 22px 70px rgba(30, 64, 175, 0.12);
+}
+
+.stat-prism-value {
+  color: transparent;
+  background: linear-gradient(110deg, #e0f2fe 10%, #93c5fd 35%, #c4b5fd 60%, #f0abfc 85%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+html.light-mode .timeline-panel,
+html.light-mode .stat-prism {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(37, 99, 235, 0.12);
+}
+
+html.light-mode .stat-prism-value {
+  background-image: linear-gradient(110deg, #1d4ed8 10%, #2563eb 40%, #7c3aed 72%, #db2777 100%);
+}
+
 @keyframes dark-video-drift-a {
   0%, 100% { transform: translate3d(-0.45%, 0.3%, 0) scale(1.055); }
   50% { transform: translate3d(0.45%, -0.3%, 0) scale(1.075); }

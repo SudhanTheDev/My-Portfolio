@@ -142,7 +142,8 @@ export function ContactSection() {
             Contact
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)]">
-            Let&apos;s talk 💬
+            Let&apos;s talk{" "}
+            <span className="text-foreground">💬</span>
           </h2>
           <p className="mt-6 text-lg text-zinc-400 max-w-xl">
             Have a project or need help? Fill out the form, and I&apos;ll get back to you soon ✉️

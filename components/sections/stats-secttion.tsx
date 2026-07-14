@@ -17,21 +17,22 @@ function AnimatedCounter({ value, suffix, inView }: { value: number; suffix: str
   useEffect(() => {
     if (!inView) return;
 
-    let start = 0;
-    const duration = 2000;
-    const increment = value / (duration / 16);
+    let animationFrame = 0;
+    let startedAt = 0;
+    const duration = 1800;
 
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
+    const tick = (time: number) => {
+      if (!startedAt) startedAt = time;
+      const progress = Math.min(1, (time - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(value * eased));
 
-    return () => clearInterval(timer);
+      if (progress < 1) animationFrame = requestAnimationFrame(tick);
+      else setCount(value);
+    };
+
+    animationFrame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animationFrame);
   }, [inView, value]);
 
   return (
@@ -56,9 +57,10 @@ export function StatsSection() {
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
               transition={{ duration: 0.4, delay: 0.05 + index * 0.05 }}
-              className="text-center group"
+              whileHover={{ y: -7 }}
+              className="stat-prism group relative px-5 py-8 text-center"
             >
-              <div className="text-4xl md:text-5xl font-medium text-white mb-3">
+              <div className="stat-prism-value mb-3 text-4xl font-semibold md:text-5xl">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} inView={isInView} />
               </div>
               <p className="text-xs text-zinc-500 font-mono tracking-wider uppercase">

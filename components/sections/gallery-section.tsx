@@ -136,7 +136,8 @@ export function GallerySection() {
           </span>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 className="text-4xl font-medium tracking-tight drop-shadow-[0_0_25px_rgba(147,197,253,0.5)] md:text-5xl lg:text-6xl">
-              Visual Stories <span className="project-emoji align-middle text-foreground">📸</span>
+              Visual Stories{" "}
+              <span className="project-emoji align-middle text-foreground">📸</span>
             </h2>
             <p className="max-w-md text-sm leading-6 text-zinc-400 lg:text-right">
               A mix of still frames and silent moving moments from the things that catch my eye.
