@@ -1,6 +1,8 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { darkBackgroundVideos } from "@/lib/background-videos";
 
 interface DustParticle {
   x: number;
@@ -51,8 +53,9 @@ export function InteractiveBackground() {
   const scrollDirectionRef = useRef(1);
   const scrollEnergyRef = useRef(0);
   const mouseRef = useRef({ x: -320, y: -320, active: false });
-  const [lightMode, setLightMode] = useState(false);
+  const [lightMode, setLightMode] = useState<boolean | null>(null);
   const [effectsMode, setEffectsMode] = useState<EffectsMode>("full");
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -97,8 +100,18 @@ export function InteractiveBackground() {
   }, []);
 
   useEffect(() => {
+    if (lightMode !== false) return;
+
+    const intervalId = window.setInterval(() => {
+      setActiveVideoIndex((current) => (current + 1) % darkBackgroundVideos.length);
+    }, 15000);
+
+    return () => window.clearInterval(intervalId);
+  }, [lightMode]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || lightMode !== true) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -522,26 +535,52 @@ export function InteractiveBackground() {
     };
   }, [effectsMode, lightMode]);
 
+  if (lightMode === null) return null;
+
+  if (!lightMode) {
+    return (
+      <div className="dark-video-background fixed inset-0 -z-10 overflow-hidden bg-black pointer-events-none" aria-hidden>
+        <AnimatePresence initial={false} mode="sync">
+          <motion.video
+            key={darkBackgroundVideos[activeVideoIndex]}
+            src={darkBackgroundVideos[activeVideoIndex]}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.6, ease: "easeInOut" }}
+            className={`absolute inset-0 h-full w-full object-cover object-center ${
+              activeVideoIndex % 2 === 0 ? "dark-video-drift-a" : "dark-video-drift-b"
+            }`}
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 ${
-        lightMode ? "light-theme-canvas" : ""
-      }`}
+      className="light-theme-canvas fixed inset-0 pointer-events-none overflow-hidden -z-10"
       aria-hidden
     >
       <div className="absolute inset-0 bg-mesh-base" />
 
-      {lightMode ? <div className="absolute inset-0 light-theme-wash" /> : null}
-      {lightMode && effectsMode !== "light" ? (
+      <div className="absolute inset-0 light-theme-wash" />
+      {effectsMode !== "light" ? (
         <div className="absolute inset-0 light-theme-colorwave" />
       ) : null}
 
       <div
         className="absolute inset-0"
         style={{
-          background: lightMode
-            ? "radial-gradient(circle at 10% 12%, rgba(59,130,246,0.24), transparent 26%), radial-gradient(circle at 84% 18%, rgba(168,85,247,0.22), transparent 24%), radial-gradient(circle at 46% 82%, rgba(244,114,182,0.18), transparent 28%), radial-gradient(circle at 64% 36%, rgba(45,212,191,0.14), transparent 18%)"
-            : "radial-gradient(circle at 12% 10%,rgba(59,130,246,0.22),transparent 32%),radial-gradient(circle at 86% 22%,rgba(168,85,247,0.18),transparent 28%),radial-gradient(circle at 48% 78%,rgba(244,114,182,0.14),transparent 30%)",
+          background:
+            "radial-gradient(circle at 10% 12%, rgba(59,130,246,0.24), transparent 26%), radial-gradient(circle at 84% 18%, rgba(168,85,247,0.22), transparent 24%), radial-gradient(circle at 46% 82%, rgba(244,114,182,0.18), transparent 28%), radial-gradient(circle at 64% 36%, rgba(45,212,191,0.14), transparent 18%)",
         }}
       />
 
@@ -549,31 +588,16 @@ export function InteractiveBackground() {
         <div
           className="absolute inset-0 mix-blend-screen"
           style={{
-            opacity: lightMode ? 0.82 : 0.8,
+            opacity: 0.82,
             background: `
-              radial-gradient(${lightMode ? "220px" : "260px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(59,130,246,0.18)" : "rgba(96,165,250,0.18)"} 0%, ${lightMode ? "rgba(59,130,246,0.08)" : "rgba(96,165,250,0.08)"} 34%, transparent 68%),
-              radial-gradient(${lightMode ? "380px" : "520px"} circle at var(--mouse-x, -320px) var(--mouse-y, -320px), ${lightMode ? "rgba(168,85,247,0.1)" : "rgba(168,85,247,0.12)"} 0%, ${lightMode ? "rgba(236,72,153,0.05)" : "rgba(236,72,153,0.06)"} 38%, transparent 72%)
+              radial-gradient(220px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.18) 0%, rgba(59,130,246,0.08) 34%, transparent 68%),
+              radial-gradient(380px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(168,85,247,0.1) 0%, rgba(236,72,153,0.05) 38%, transparent 72%)
             `,
           }}
         />
       ) : null}
 
-      {!lightMode && effectsMode === "full" ? (
-        <div
-          className="absolute inset-0"
-          style={{
-            opacity: 0.6,
-            background:
-              "conic-gradient(from 0deg at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(59,130,246,0.1), rgba(168,85,247,0.06), rgba(45,212,191,0.08), rgba(59,130,246,0.1))",
-            maskImage:
-              "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
-            WebkitMaskImage:
-              "radial-gradient(280px circle at var(--mouse-x, -320px) var(--mouse-y, -320px), rgba(0,0,0,0.9) 0%, transparent 74%)",
-          }}
-        />
-      ) : null}
-
-      <canvas ref={canvasRef} className={`absolute inset-0 ${lightMode ? "opacity-100" : "opacity-95"}`} />
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-100" />
 
       <div className="absolute inset-0 vignette" />
     </div>

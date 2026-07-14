@@ -951,6 +951,34 @@
   background: radial-gradient(ellipse at center, transparent 40%, rgba(3, 0, 20, 0.5) 100%);
 }
 
+.dark-video-background video {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0) scale(1.055);
+  will-change: transform, opacity;
+}
+
+.dark-video-drift-a {
+  animation: dark-video-drift-a 24s ease-in-out infinite;
+}
+
+.dark-video-drift-b {
+  animation: dark-video-drift-b 24s ease-in-out infinite;
+}
+
+html.light-mode .dark-video-background {
+  display: none;
+}
+
+@keyframes dark-video-drift-a {
+  0%, 100% { transform: translate3d(-0.45%, 0.3%, 0) scale(1.055); }
+  50% { transform: translate3d(0.45%, -0.3%, 0) scale(1.075); }
+}
+
+@keyframes dark-video-drift-b {
+  0%, 100% { transform: translate3d(0.45%, -0.3%, 0) scale(1.055); }
+  50% { transform: translate3d(-0.45%, 0.3%, 0) scale(1.075); }
+}
+
 @keyframes edge-shift-horizontal {
   0%, 100% { transform: translateX(-6%); opacity: 0.55; }
   50% { transform: translateX(6%); opacity: 0.9; }

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "@/app/theme-provider";
+import { darkBackgroundVideos } from "@/lib/background-videos";
 import { galleryPreloadAssets } from "@/lib/gallery-media";
 import { interestCards } from "@/lib/interests";
 
@@ -21,6 +22,7 @@ const preloadAssets = [
   "/profile-gallery/photo-8.jpg",
   "/ngl-icon.png",
   "/music/background.mp3",
+  ...darkBackgroundVideos,
   "/sudhan-bhattarai-cv.pdf",
   "/digital-competences-report.pdf",
   ...interestCards.map((interest) => interest.image),
@@ -469,6 +471,13 @@ export function IntroLoader() {
       );
 
     const loadAsset = (src: string) => {
+      if (
+        darkBackgroundVideos.some((video) => video === src) &&
+        document.documentElement.classList.contains("light-mode")
+      ) {
+        return Promise.resolve();
+      }
+
       if (
         /\.(png|jpe?g|webp|gif|svg)(\?|$)/i.test(src) ||
         src.startsWith("https://images.unsplash.com/")
