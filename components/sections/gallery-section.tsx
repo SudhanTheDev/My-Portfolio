@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Film, VolumeX, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { InteractiveButton } from "@/components/interactive-button";
+import { expandableCardLayoutId, expandableCardTransition } from "@/lib/expandable-motion";
 import { galleryMedia, type GalleryMediaItem } from "@/lib/gallery-media";
 import { cn } from "@/lib/utils";
 
@@ -25,10 +26,11 @@ function GalleryCard({
   return (
     <motion.button
       type="button"
+      layoutId={expandableCardLayoutId("gallery", item.id)}
       data-cursor="Open"
       initial={{ opacity: 0, y: 24, scale: 0.97 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.97 }}
-      transition={{ duration: 0.55, delay: 0.08 + index * 0.06 }}
+      transition={{ duration: 0.55, delay: 0.08 + index * 0.06, layout: expandableCardTransition }}
       whileHover={{ y: -4 }}
       onClick={onOpen}
       className={cn(
@@ -231,10 +233,8 @@ export function GallerySection() {
             </InteractiveButton>
 
             <motion.div
-              initial={{ scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.98, opacity: 0 }}
-              transition={{ duration: 0.28 }}
+              layoutId={expandableCardLayoutId("gallery", selectedItem.id)}
+              transition={expandableCardTransition}
               onClick={(event) => event.stopPropagation()}
               className="relative flex max-h-[90vh] w-full max-w-6xl items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-black"
             >

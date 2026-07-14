@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { type CSSProperties, type MouseEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { expandableCardLayoutId, expandableCardTransition } from "@/lib/expandable-motion";
 
 const skillCategories = [
   {
@@ -197,13 +198,14 @@ function ExpertiseSpotlightCard({
   return (
     <motion.button
       type="button"
+      layoutId={expandableCardLayoutId("skill", category.title)}
       onClick={onOpen}
       onMouseMove={moveSpotlight}
       initial={{ opacity: 0, y: 22 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
       whileHover={{ y: -5 }}
       whileTap={{ scale: 0.985 }}
-      transition={{ duration: 0.5, delay: 0.08 + index * 0.07 }}
+      transition={{ duration: 0.5, delay: 0.08 + index * 0.07, layout: expandableCardTransition }}
       style={
         {
           "--spotlight-x": "50%",
@@ -378,10 +380,8 @@ export function SkillsSection() {
             onClick={() => setSelectedCategory(null)}
           >
             <motion.div
-              initial={{ opacity: 0, y: 28, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 18, scale: 0.96 }}
-              transition={{ duration: 0.28, ease: "easeOut" }}
+              layoutId={expandableCardLayoutId("skill", selectedCategory.title)}
+              transition={expandableCardTransition}
               onClick={(event) => event.stopPropagation()}
               className="relative my-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-[#080719]/95 p-6 shadow-2xl shadow-blue-950/40 md:p-8"
             >

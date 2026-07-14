@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
+import { expandableCardLayoutId, expandableCardTransition } from "@/lib/expandable-motion";
 import { viewport } from "@/lib/motion";
 
 const projects = [
@@ -169,6 +170,7 @@ export function ProjectsSection() {
                     <motion.button
                       type="button"
                       key={project.title}
+                      layoutId={expandableCardLayoutId("project", project.title)}
                       onClick={() => {
                         if (isActive) {
                           setSelectedProject(project);
@@ -190,7 +192,7 @@ export function ProjectsSection() {
                         zIndex: isActive ? 30 : projects.length - Math.abs(signedOffset),
                       }}
                       exit={{ opacity: 0, scale: 0.88, z: 100, rotate: -rotation }}
-                      transition={{ duration: 0.48, ease: "easeInOut" }}
+                      transition={{ duration: 0.48, ease: "easeInOut", layout: expandableCardTransition }}
                       className="group absolute inset-0 origin-bottom overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#090818] text-left shadow-[0_28px_80px_rgba(0,0,0,0.5)] outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70"
                     >
                       <img
@@ -316,10 +318,8 @@ export function ProjectsSection() {
                   onClick={() => setSelectedProject(null)}
                 >
                   <motion.div
-                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 24, scale: 0.96 }}
-                    transition={{ duration: 0.32, ease: "easeOut" }}
+                    layoutId={expandableCardLayoutId("project", selectedProject.title)}
+                    transition={expandableCardTransition}
                     onClick={(event) => event.stopPropagation()}
                     className="my-auto w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/15 bg-[#070617]/95 shadow-2xl shadow-blue-950/50"
                   >
