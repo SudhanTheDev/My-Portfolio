@@ -29,7 +29,7 @@ const CLICK_HOLD_THRESHOLD_MS = 450;
 const socialLinks = [
   {
     name: "GitHub",
-    href: "https://github.com/Sujan-Nepal",
+    href: "https://github.com/SudhanTheDev",
     icon: Github,
     destination: "GitHub profile",
     accent: "hover:shadow-[0_0_30px_rgba(59,130,246,0.6),0_0_60px_rgba(59,130,246,0.3)]",

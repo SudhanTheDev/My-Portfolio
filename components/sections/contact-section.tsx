@@ -18,7 +18,7 @@ import {
 
 const socialLinks = [
   { name: "Email", href: "mailto:sudhan.bhattarainp@gmail.com", icon: Mail, destination: "email draft" },
-  { name: "GitHub", href: "https://github.com/Sujan-Nepal", icon: Github, destination: "GitHub profile" },
+  { name: "GitHub", href: "https://github.com/SudhanTheDev", icon: Github, destination: "GitHub profile" },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/sudhan-bhattarai-662769392/", icon: Linkedin, destination: "LinkedIn profile" },
   { name: "Instagram", href: "https://www.instagram.com/suzzy.3x3", icon: Instagram, destination: "Instagram profile" },
 ];
