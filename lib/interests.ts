@@ -1,10 +1,10 @@
 export const interestCards = [
   {
-    title: "Anime",
-    category: "Stories & Worlds",
-    description: "Bold characters, rivalries, and unforgettable visual storytelling.",
-    image: "https://images7.alphacoders.com/722/thumb-1920-722503.png",
-    accent: "#f472b6",
+    title: "AI",
+    category: "Intelligent Tools",
+    description: "Exploring creative systems that learn, assist, and inspire.",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1000&q=82",
+    accent: "#a78bfa",
   },
   {
     title: "Technology",
@@ -14,11 +14,11 @@ export const interestCards = [
     accent: "#38bdf8",
   },
   {
-    title: "AI",
-    category: "Intelligent Tools",
-    description: "Exploring creative systems that learn, assist, and inspire.",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1000&q=82",
-    accent: "#a78bfa",
+    title: "Anime",
+    category: "Stories & Worlds",
+    description: "Bold characters, rivalries, and unforgettable visual storytelling.",
+    image: "https://images7.alphacoders.com/722/thumb-1920-722503.png",
+    accent: "#f472b6",
   },
   {
     title: "Photography",
