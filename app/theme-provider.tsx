@@ -22,7 +22,7 @@ function applyTheme(newTheme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [pendingTheme, setPendingTheme] = useState<Theme | null>(null);
@@ -31,7 +31,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
-    const defaultTheme: Theme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+    const defaultTheme: Theme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "dark";
     setTheme(defaultTheme);
     localStorage.setItem("theme", defaultTheme);
     applyTheme(defaultTheme);
